@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @Controller
@@ -35,9 +36,14 @@ public class ProjectsController {
     }
 
     @GetMapping("{projectName}/{runIndex}")
-    public ModelAndView runView(@PathVariable("projectName") String projectName, @PathVariable("runIndex") long runIndex) throws ElementNotFoundException {
+    public ModelAndView runView(@PathVariable("projectName") String projectName,
+                                @PathVariable("runIndex") long runIndex,
+                                @QueryParam("failedOnly") boolean failedOnly) throws ElementNotFoundException {
         Project project = persistence.findProject(projectName);
         TestRun testRun = project.getTestRun(runIndex);
-        return new ModelAndView("testRun", "testRun", testRun);
+        ModelAndView modelAndView = new ModelAndView("testRun");
+        modelAndView.addObject("testRun", testRun);
+        modelAndView.addObject("failedOnly", failedOnly);
+        return modelAndView;
     }
 }

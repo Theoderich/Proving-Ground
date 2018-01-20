@@ -29,8 +29,14 @@ public class TestRun implements Comparable<TestRun> {
         return Collections.unmodifiableSet(testExecutions);
     }
 
-    public List<TestExecution> getSortedTestExecutions() {
-        return testExecutions.stream().sorted(Comparator.comparing(execution -> execution.getTest().getFullName())).collect(Collectors.toList());
+    public List<TestExecution> getSortedTestExecutions(boolean failedOnly) {
+        Set<TestExecution> source;
+        if (failedOnly) {
+            source = failedTests;
+        } else {
+            source = testExecutions;
+        }
+        return source.stream().sorted(Comparator.comparing(execution -> execution.getTest().getFullName())).collect(Collectors.toList());
     }
 
     public LocalDateTime getStart() {
