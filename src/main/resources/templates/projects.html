@@ -1,0 +1,23 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+
+    <title>Proving Grounds Projects</title>
+</head>
+<body>
+<div class="container">
+    <h1>Projects</h1>
+
+    <ul class="list-group">
+      <a class="list-group-item list-group-item-action" th:each="projectName : ${projectNames}" th:text="${projectName}" th:href="${projectName} + '/'"></a>
+    </ul>
+</div>
+
+
+</body>
+</html>
