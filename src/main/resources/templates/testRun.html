@@ -27,7 +27,9 @@
         </thead>
         <tbody>
         <tr th:each="execution : ${testRun.getSortedTestExecutions(failedOnly)}">
-            <td th:text="${execution.test.fullName}"></td>
+            <td><a th:text="${execution.test.fullName}"
+                   th:href="@{|${#httpServletRequest.requestURI}/${#uris.escapePathSegment(execution.test.fullName)}|}"></a>
+            </td>
             <td th:text="${execution.executionTime.toMillis()} + 'ms'"></td>
             <td> <span th:classappend="${execution.result.success} ? 'badge-success' :  'badge-danger'"
                        th:text="${execution.result.success} ? 'success' : 'failed'" class="badge"></span></td>

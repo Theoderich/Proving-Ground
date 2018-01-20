@@ -2,6 +2,7 @@ package de.theo.pg.provingground.mvc;
 
 import de.theo.pg.provingground.ElementNotFoundException;
 import de.theo.pg.provingground.Project;
+import de.theo.pg.provingground.TestExecution;
 import de.theo.pg.provingground.TestRun;
 import de.theo.pg.provingground.persistence.Persistence;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,18 @@ public class ProjectsController {
         ModelAndView modelAndView = new ModelAndView("testRun");
         modelAndView.addObject("testRun", testRun);
         modelAndView.addObject("failedOnly", failedOnly);
+        return modelAndView;
+    }
+
+    @GetMapping("{projectName}/{runIndex}/{testName:.+}")
+    public ModelAndView singleTestView(@PathVariable("projectName") String projectName,
+                                       @PathVariable("runIndex") long runIndex,
+                                       @PathVariable("testName") String testName) throws ElementNotFoundException {
+        Project project = persistence.findProject(projectName);
+        TestRun testRun = project.getTestRun(runIndex);
+        TestExecution testExecution = testRun.getTestExecution(testName);
+        ModelAndView modelAndView = new ModelAndView("singleTest");
+        modelAndView.addObject("testExecution", testExecution);
         return modelAndView;
     }
 }

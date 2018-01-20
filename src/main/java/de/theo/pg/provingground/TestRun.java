@@ -12,6 +12,7 @@ public class TestRun implements Comparable<TestRun> {
 
     private final Set<TestExecution> testExecutions;
     private final Set<TestExecution> failedTests;
+    private final Map<String, TestExecution> testsByFullName;
 
     private TestRunResult result;
 
@@ -23,6 +24,7 @@ public class TestRun implements Comparable<TestRun> {
 
         testExecutions = new HashSet<>();
         failedTests = new HashSet<>();
+        testsByFullName = new HashMap<>();
     }
 
     public Set<TestExecution> getTestExecutions() {
@@ -37,6 +39,10 @@ public class TestRun implements Comparable<TestRun> {
             source = testExecutions;
         }
         return source.stream().sorted(Comparator.comparing(execution -> execution.getTest().getFullName())).collect(Collectors.toList());
+    }
+
+    public TestExecution getTestExecution(String testname) {
+        return testsByFullName.get(testname);
     }
 
     public LocalDateTime getStart() {
@@ -57,6 +63,7 @@ public class TestRun implements Comparable<TestRun> {
             this.result = TestRunResult.FAILED;
             failedTests.add(newExecution);
         }
+        this.testsByFullName.put(newExecution.getTest().getFullName(), newExecution);
     }
 
     public void addExecutions(Collection<TestExecution> newExecutions) {

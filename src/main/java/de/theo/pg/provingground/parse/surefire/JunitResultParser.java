@@ -3,7 +3,9 @@ package de.theo.pg.provingground.parse.surefire;
 import de.theo.pg.provingground.Test;
 import de.theo.pg.provingground.TestExecution;
 import de.theo.pg.provingground.TestResult;
-import de.theo.pg.provingground.info.*;
+import de.theo.pg.provingground.info.ErrorExecutionInfo;
+import de.theo.pg.provingground.info.ExecutionInfo;
+import de.theo.pg.provingground.info.SuccessExecutionInfo;
 import de.theo.pg.provingground.parse.surefire.xsd.Testsuite;
 
 import javax.xml.bind.JAXBContext;
@@ -28,8 +30,6 @@ public class JunitResultParser {
     private static final JAXBContext CONTEXT = initJaxbContext();
     private static final Pattern SUREFIRE_FILENAME_PATTERN = Pattern.compile("^TEST-.+\\.xml$");
     private static final Pattern TEST_NAME_PATTERN = Pattern.compile("(\\w+[\\w.]+)\\.(\\w+)");
-
-
 
 
     public List<TestExecution> parse(Path sourcePath) throws IOException {
@@ -69,20 +69,26 @@ public class JunitResultParser {
                 TestResult result;
                 ExecutionInfo info;
 
+                String systemOut = "";
+                if (elementNotNull(testcase.getSystemOut())) {
+                    systemOut = testcase.getSystemOut().getValue().toString();
+                }
+
                 if (elementNotNull(testcase.getError())) {
                     result = TestResult.ERROR;
                     Testsuite.Testcase.Error error = testcase.getError().getValue();
-                    info = new ErrorExecutionInfo(error.getMessage(), error.getType(), error.getValue());
+
+                    info = new ErrorExecutionInfo(error.getMessage(), error.getType(), error.getValue(), systemOut);
                 } else if (testcase.getFailure().size() > 0) {
                     result = TestResult.FAILED;
                     Testsuite.Testcase.Failure failure = testcase.getFailure().get(0);
-                    info = new FailedExecutionInfo(failure.getMessage(), failure.getValue());
+                    info = new ErrorExecutionInfo(failure.getMessage(), failure.getType(), failure.getValue(), systemOut);
                 } else if (elementNotNull(testcase.getSkipped())) {
                     result = TestResult.SKIPPED;
-                    info = new SkippedExecutionInfo();
+                    info = new SuccessExecutionInfo(systemOut);
                 } else {
                     result = TestResult.SUCCESS;
-                    info = new SuccessExecutionInfo();
+                    info = new SuccessExecutionInfo(systemOut);
                 }
                 executionsInFile.add(new TestExecution(test, result, executionTime, info));
             }
@@ -94,7 +100,7 @@ public class JunitResultParser {
     }
 
     private boolean elementNotNull(JAXBElement element) {
-        return element != null && ! element.isNil();
+        return element != null && !element.isNil();
     }
 
     private Unmarshaller getUnmarshaller() {

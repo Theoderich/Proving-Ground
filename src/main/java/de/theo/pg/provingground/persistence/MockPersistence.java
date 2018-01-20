@@ -1,14 +1,15 @@
 package de.theo.pg.provingground.persistence;
 
-import de.theo.pg.provingground.*;
-import de.theo.pg.provingground.info.SuccessExecutionInfo;
+import de.theo.pg.provingground.Project;
+import de.theo.pg.provingground.Test;
+import de.theo.pg.provingground.TestExecution;
+import de.theo.pg.provingground.TestRun;
 import de.theo.pg.provingground.parse.surefire.JunitResultParser;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collections;

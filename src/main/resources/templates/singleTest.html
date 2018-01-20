@@ -1,0 +1,32 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+
+    <title>Proving Grounds Projects</title>
+</head>
+<body>
+<div class="container">
+    <h3 th:text="${testExecution.test.fullName}"></h3>
+
+    <div th:if="${testExecution.result.success}">
+        <h3>Success!</h3>
+    </div>
+    <div th:unless="${testExecution.result.success}">
+        <pre th:text="${testExecution.executionInfo.errorType}"></pre>
+        <h3>Error Message</h3>
+        <pre th:text="${testExecution.executionInfo.errorMessage}"></pre>
+        <h3>Stacktrace</h3>
+        <pre th:text="${testExecution.executionInfo.stackTrace}"></pre>
+        <h3>Standard Out</h3>
+        <pre th:text="${testExecution.executionInfo.standardOut}"></pre>
+    </div>
+</div>
+
+
+</body>
+</html>

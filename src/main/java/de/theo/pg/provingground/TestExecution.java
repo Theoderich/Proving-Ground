@@ -3,7 +3,6 @@ package de.theo.pg.provingground;
 import de.theo.pg.provingground.info.ExecutionInfo;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TestExecution {
@@ -32,6 +31,10 @@ public class TestExecution {
 
     public Duration getExecutionTime() {
         return executionTime;
+    }
+
+    public ExecutionInfo getExecutionInfo() {
+        return executionInfo;
     }
 
     @Override
