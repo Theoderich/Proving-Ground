@@ -14,14 +14,23 @@ import de.theo.pg.provingground.TestResult;
 public class TestRunView {
 
     private int id;
+    private int testSuiteId;
     private String name;
     private TestResult result;
 
-    private TestRunView() {
+    public TestRunView(int id, int testSuiteId, String name, TestResult result) {
+        this.id = id;
+        this.testSuiteId = testSuiteId;
+        this.name = name;
+        this.result = result;
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getTestSuiteId() {
+        return testSuiteId;
     }
 
     public String getName() {
@@ -30,31 +39,5 @@ public class TestRunView {
 
     public TestResult getResult() {
         return result;
-    }
-
-
-    public static class TestRunViewBuilder {
-
-        private TestRunView testRunView = new TestRunView();
-
-        public TestRunView withId(int id) {
-            testRunView.id = id;
-            return testRunView;
-        }
-
-        public TestRunView withName(String name) {
-            testRunView.name = name;
-            return testRunView;
-        }
-
-        public TestRunView withResult(TestResult result) {
-            testRunView.result = result;
-            return testRunView;
-        }
-
-        public TestRunView build(){
-            return testRunView;
-        }
-
     }
 }

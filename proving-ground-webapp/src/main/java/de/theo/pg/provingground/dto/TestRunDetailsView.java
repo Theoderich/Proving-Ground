@@ -13,6 +13,8 @@ import de.theo.pg.provingground.TestResult;
  */
 public class TestRunDetailsView {
 
+    private int id;
+    private int testSuiteId;
     private String name;
     private TestResult result;
     private String output;
@@ -20,13 +22,23 @@ public class TestRunDetailsView {
     private String errorMessage;
     private String stacktrace;
 
-    public TestRunDetailsView(String name, TestResult result, String output, String errorType, String errorMessage, String stacktrace) {
+    public TestRunDetailsView(int id, int testSuiteId, String name, TestResult result, String output, String errorType, String errorMessage, String stacktrace) {
+        this.id = id;
+        this.testSuiteId = testSuiteId;
         this.name = name;
         this.result = result;
         this.output = output;
         this.errorType = errorType;
         this.errorMessage = errorMessage;
         this.stacktrace = stacktrace;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getTestSuiteId() {
+        return testSuiteId;
     }
 
     public String getName() {

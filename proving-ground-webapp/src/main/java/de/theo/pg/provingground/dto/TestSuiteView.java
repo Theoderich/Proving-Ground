@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class TestSuiteView {
 
     private int id;
+    private int projectId;
     private String name;
     private LocalDateTime startTime;
     private Status status;
@@ -23,8 +24,9 @@ public class TestSuiteView {
     private int num_error;
     private int num_skipped;
 
-    public TestSuiteView(int id, String name, LocalDateTime startTime, Status status, int num_total, int num_success, int num_failed, int num_error, int num_skipped) {
+    public TestSuiteView(int id, int projectId, String name, LocalDateTime startTime, Status status, int num_total, int num_success, int num_failed, int num_error, int num_skipped) {
         this.id = id;
+        this.projectId = projectId;
         this.name = name;
         this.startTime = startTime;
         this.status = status;
@@ -37,6 +39,10 @@ public class TestSuiteView {
 
     public int getId() {
         return id;
+    }
+
+    public int getProjectId() {
+        return projectId;
     }
 
     public String getName() {
@@ -70,4 +76,6 @@ public class TestSuiteView {
     public int getNum_skipped() {
         return num_skipped;
     }
+
+
 }
