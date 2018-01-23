@@ -1,4 +1,4 @@
-package de.theo.pg.provingground.persistence;
+package de.theo.pg.provingground.dto;
 
 /**
  * Created by a theo on 22.01.2018.
