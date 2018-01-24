@@ -11,17 +11,17 @@ package de.theo.pg.provingground.dto;
  */
 public class ProjectView {
 
-    private final int id;
+    private final long id;
     private final String name;
     private final Status status;
 
-    public ProjectView(int id, String name, Status status) {
+    public ProjectView(long id, String name, Status status) {
         this.id = id;
         this.name = name;
         this.status = status;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

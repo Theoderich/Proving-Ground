@@ -15,13 +15,13 @@ import java.time.Duration;
  */
 public class TestRunView {
 
-    private final int id;
-    private final int testSuiteId;
+    private final long id;
+    private final long testSuiteId;
     private final String name;
     private final TestResult result;
     private final Duration duration;
 
-    public TestRunView(int id, int testSuiteId, String name, TestResult result, Duration duration) {
+    public TestRunView(long id, long testSuiteId, String name, TestResult result, Duration duration) {
         this.id = id;
         this.testSuiteId = testSuiteId;
         this.name = name;
@@ -29,11 +29,11 @@ public class TestRunView {
         this.duration = duration;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public int getTestSuiteId() {
+    public long getTestSuiteId() {
         return testSuiteId;
     }
 

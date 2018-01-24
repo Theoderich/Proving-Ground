@@ -160,6 +160,50 @@
                                     <excludes></excludes>
                                     <dateAsTimestamp>true</dateAsTimestamp>
                                     <inputSchema>PUBLIC</inputSchema>
+                                    <customTypes>
+                                        <customType>
+                                            <name>Status</name>
+                                            <type>de.theo.pg.provingground.dto.Status</type>
+                                            <converter>de.theo.pg.provingground.persistence.StatusConverter</converter>
+                                        </customType>
+                                        <customType>
+                                            <name>TestResult</name>
+                                            <type>de.theo.pg.provingground.TestResult</type>
+                                            <converter>de.theo.pg.provingground.persistence.ResultConverter</converter>
+                                        </customType>
+                                        <customType>
+                                            <name>Duration</name>
+                                            <type>java.time.Duration</type>
+                                            <converter>de.theo.pg.provingground.persistence.DurationConverter</converter>
+                                        </customType>
+                                        <customType>
+                                            <name>LocalDateTime</name>
+                                            <type>java.time.LocalDateTime</type>
+                                            <converter>de.theo.pg.provingground.persistence.LocalDateTimeConverter</converter>
+                                        </customType>
+                                    </customTypes>
+                                    <forcedTypes>
+                                        <forcedType>
+                                            <name>Status</name>
+                                            <expression>status</expression>
+                                            <types>.*</types>
+                                        </forcedType>
+                                        <forcedType>
+                                            <name>TestResult</name>
+                                            <expression>result</expression>
+                                            <types>.*</types>
+                                        </forcedType>
+                                        <forcedType>
+                                            <name>Duration</name>
+                                            <expression>duration</expression>
+                                            <types>.*</types>
+                                        </forcedType>
+                                        <forcedType>
+                                            <name>LocalDateTime</name>
+                                            <expression>start_time</expression>
+                                            <types>.*</types>
+                                        </forcedType>
+                                    </forcedTypes>
                                 </database>
                                 <generate>
                                     <deprecated>false</deprecated>

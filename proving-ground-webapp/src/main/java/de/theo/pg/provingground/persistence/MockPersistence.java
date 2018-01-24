@@ -7,6 +7,8 @@ import de.theo.pg.provingground.dto.TestRunView;
 import de.theo.pg.provingground.dto.TestSuiteView;
 import de.theo.pg.provingground.info.ExecutionInfo;
 import de.theo.pg.provingground.parse.surefire.JunitResultParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 public class MockPersistence implements Persistence {
 
     private static final LocalDateTime START_RUN_1 = LocalDateTime.of(2018, Month.JANUARY, 17, 20, 30, 7);
@@ -27,6 +30,7 @@ public class MockPersistence implements Persistence {
     private static final Test TEST_2 = new Test("de.theo.test", "MyLittleTestClass", "testTheOtherStuff");
 
     private final Project project;
+
 
     public MockPersistence() throws IOException, URISyntaxException {
         project = new Project("MyLittleProject");
@@ -52,7 +56,7 @@ public class MockPersistence implements Persistence {
     }
 
     @Override
-    public ProjectView findProject(int id) throws ElementNotFoundException {
+    public ProjectView findProject(long id) throws ElementNotFoundException {
         if (id == 1) {
             return new ProjectView(1, project.getName(), project.getStatus());
         }
@@ -60,13 +64,13 @@ public class MockPersistence implements Persistence {
     }
 
     @Override
-    public List<TestSuiteView> findTestSuitesForProject(int projectId) throws ElementNotFoundException {
+    public List<TestSuiteView> findTestSuitesForProject(long projectId) throws ElementNotFoundException {
         findProject(1);
         return Collections.singletonList(findTestSuite(1));
     }
 
     @Override
-    public TestSuiteView findTestSuite(int testSuiteId) throws ElementNotFoundException {
+    public TestSuiteView findTestSuite(long testSuiteId) throws ElementNotFoundException {
         TestRun testRun = project.getTestRun(testSuiteId);
         return new TestSuiteView(
                 1, 1, "myLittleTestRun",
@@ -75,7 +79,7 @@ public class MockPersistence implements Persistence {
     }
 
     @Override
-    public List<TestRunView> findTestRunsForSuite(int testSuiteId) throws ElementNotFoundException {
+    public List<TestRunView> findTestRunsForSuite(long testSuiteId) throws ElementNotFoundException {
         TestRun testRun = project.getTestRun(testSuiteId);
         List<TestExecution> testExecutions = testRun.getSortedTestExecutions(false);
         int idCounter = 0;
@@ -87,18 +91,23 @@ public class MockPersistence implements Persistence {
     }
 
     @Override
-    public List<TestRunView> findTestRunsForSuite(int testSuiteId, TestResult filter) throws ElementNotFoundException {
+    public List<TestRunView> findTestRunsForSuite(long testSuiteId, TestResult filter) throws ElementNotFoundException {
         List<TestRunView> allRuns = findTestRunsForSuite(testSuiteId);
         return allRuns.stream().filter(run -> run.getResult() == filter).collect(Collectors.toList());
     }
 
     @Override
-    public TestRunDetailsView findTestRun(int testRunId) throws ElementNotFoundException {
+    public TestRunDetailsView findTestRun(long testRunId) throws ElementNotFoundException {
         TestRun testRun = project.getTestRun(1);
-        TestExecution source = testRun.getSortedTestExecutions(false).get(testRunId);
+        TestExecution source = testRun.getSortedTestExecutions(false).get((int) testRunId);
         ExecutionInfo executionInfo = source.getExecutionInfo();
         return new TestRunDetailsView(
                 testRunId, 1, source.getTest().getFullName(), source.getResult(), source.getExecutionTime(),
                 executionInfo.getStandardOut(), executionInfo.getErrorType(), executionInfo.getErrorMessage(), executionInfo.getStackTrace());
+    }
+
+    @Override
+    public void persist(Project project) {
+
     }
 }
