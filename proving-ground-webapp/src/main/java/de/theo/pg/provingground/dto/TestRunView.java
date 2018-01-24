@@ -6,6 +6,8 @@ package de.theo.pg.provingground.dto;
 
 import de.theo.pg.provingground.TestResult;
 
+import java.time.Duration;
+
 /**
  * TODO describe type.
  *
@@ -13,16 +15,18 @@ import de.theo.pg.provingground.TestResult;
  */
 public class TestRunView {
 
-    private int id;
-    private int testSuiteId;
-    private String name;
-    private TestResult result;
+    private final int id;
+    private final int testSuiteId;
+    private final String name;
+    private final TestResult result;
+    private final Duration duration;
 
-    public TestRunView(int id, int testSuiteId, String name, TestResult result) {
+    public TestRunView(int id, int testSuiteId, String name, TestResult result, Duration duration) {
         this.id = id;
         this.testSuiteId = testSuiteId;
         this.name = name;
         this.result = result;
+        this.duration = duration;
     }
 
     public int getId() {
@@ -39,5 +43,9 @@ public class TestRunView {
 
     public TestResult getResult() {
         return result;
+    }
+
+    public Duration getDuration() {
+        return duration;
     }
 }

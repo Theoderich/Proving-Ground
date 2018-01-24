@@ -5,5 +5,9 @@ package de.theo.pg.provingground.dto;
  */
 public enum Status {
     OK,
-    NOK
+    NOK;
+
+    public boolean isOk(){
+        return this == OK;
+    }
 }

@@ -1,6 +1,8 @@
 package de.theo.pg.provingground;
 
 
+import de.theo.pg.provingground.dto.Status;
+
 import java.util.*;
 
 public class Project {
@@ -17,7 +19,7 @@ public class Project {
         this.testRuns = new TreeSet<>();
     }
 
-    public void addTestRun(TestRun newTestRun){
+    public void addTestRun(TestRun newTestRun) {
         this.testRuns.add(newTestRun);
         this.knownTests.addAll(newTestRun.getAllExecutedTests());
     }
@@ -32,10 +34,14 @@ public class Project {
 
     public TestRun getTestRun(long index) throws ElementNotFoundException {
         Optional<TestRun> run = testRuns.stream().filter(testRun -> testRun.getIndex() == index).findFirst();
-        if(!run.isPresent()){
+        if (!run.isPresent()) {
             throw new ElementNotFoundException();
         }
         return run.get();
+    }
+
+    public Status getStatus() {
+        return testRuns.last().getStatus();
     }
 
     @Override

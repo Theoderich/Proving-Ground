@@ -11,9 +11,9 @@ package de.theo.pg.provingground.dto;
  */
 public class ProjectView {
 
-    private int id;
-    private String name;
-    private Status status;
+    private final int id;
+    private final String name;
+    private final Status status;
 
     public ProjectView(int id, String name, Status status) {
         this.id = id;

@@ -15,9 +15,9 @@
     <h2>Test Runs</h2>
 
     <ul class="list-group">
-      <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:each="run : ${project.testRuns}" th:href="${run.index}">
-          <th:block th:text="${run.start}"></th:block>
-          <span th:classappend="${run.result.success} ? 'badge-success' :  'badge-danger'" th:text="${run.result.success} ? 'success' : 'failed'" class="badge"></span>
+      <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:each="suite : ${testSuites}" th:href="${suite.id}">
+          <th:block th:text="${suite.name}"></th:block>
+          <span th:classappend="${suite.status.ok} ? 'badge-success' :  'badge-danger'" th:text="${suite.status.ok} ? 'success' : 'failed'" class="badge"></span>
       </a>
     </ul>
 </div>

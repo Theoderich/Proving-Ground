@@ -1,5 +1,7 @@
 package de.theo.pg.provingground;
 
+import de.theo.pg.provingground.dto.Status;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,19 +13,23 @@ public class TestRun implements Comparable<TestRun> {
     private final LocalDateTime start;
 
     private final Set<TestExecution> testExecutions;
+    private final Set<TestExecution> successTests;
     private final Set<TestExecution> failedTests;
+    private final Set<TestExecution> skippedTests;
     private final Map<String, TestExecution> testsByFullName;
 
-    private TestRunResult result;
+    private Status status;
 
 
     public TestRun(long index, LocalDateTime start) {
         this.index = index;
         this.start = start;
-        this.result = TestRunResult.SUCCESS;
+        this.status = Status.OK;
 
         testExecutions = new HashSet<>();
+        successTests = new HashSet<>();
         failedTests = new HashSet<>();
+        skippedTests = new HashSet<>();
         testsByFullName = new HashMap<>();
     }
 
@@ -53,15 +59,20 @@ public class TestRun implements Comparable<TestRun> {
         return index;
     }
 
-    public TestRunResult getResult() {
-        return result;
+    public Status getStatus() {
+        return status;
     }
 
     public void addExecution(TestExecution newExecution) {
         this.testExecutions.add(newExecution);
         if(newExecution.getResult().isFailure()){
-            this.result = TestRunResult.FAILED;
+            this.status = Status.NOK;
             failedTests.add(newExecution);
+        }
+         else if(newExecution.getResult() == TestResult.SKIPPED){
+            skippedTests.add(newExecution);
+        } else {
+            successTests.add(newExecution);
         }
         this.testsByFullName.put(newExecution.getTest().getFullName(), newExecution);
     }
@@ -78,6 +89,23 @@ public class TestRun implements Comparable<TestRun> {
         return Collections.unmodifiableSet(failedTests);
     }
 
+
+    public int getTotalNumberOfTests(){
+        return testExecutions.size();
+    }
+
+    public int getNumberOfSuccessfulTests(){
+        return successTests.size();
+    }
+
+    public int getNumberOfFailedTests() {
+        return failedTests.size();
+    }
+
+    public int getNumberOfSkippedTests() {
+        return skippedTests.size();
+    }
+
     @Override
     public int compareTo(TestRun other) {
         return Long.compare(this.index, other.index);
@@ -91,13 +119,13 @@ public class TestRun implements Comparable<TestRun> {
         return index == testRun.index &&
                 Objects.equals(start, testRun.start) &&
                 Objects.equals(testExecutions, testRun.testExecutions) &&
-                result == testRun.result;
+                status == testRun.status;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(index, start, testExecutions, result);
+        return Objects.hash(index, start, testExecutions, status);
     }
 
     @Override
@@ -106,7 +134,7 @@ public class TestRun implements Comparable<TestRun> {
                 "index=" + index +
                 ", start=" + start +
                 ", testExecutions=" + testExecutions +
-                ", result=" + result +
+                ", status=" + status +
                 '}';
     }
 }

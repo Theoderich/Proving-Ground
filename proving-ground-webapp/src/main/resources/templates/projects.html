@@ -14,7 +14,7 @@
     <h1>Projects</h1>
 
     <ul class="list-group">
-      <a class="list-group-item list-group-item-action" th:each="projectName : ${projectNames}" th:text="${projectName}" th:href="${projectName} + '/'"></a>
+      <a class="list-group-item list-group-item-action" th:each="project : ${allProjects}" th:text="${project.name}" th:href="${project.id} + '/'"></a>
     </ul>
 </div>
 

@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS testsuite;
-DROP TABLE IF EXISTS test_run;
+DROP TABLE IF EXISTS testrun;
 
 DROP SEQUENCE IF EXISTS s_id;
 CREATE SEQUENCE s_id
@@ -24,7 +24,6 @@ CREATE TABLE testsuite (
   num_total     INT                NOT NULL,
   num_success   INT                NOT NULL,
   num_failed    INT                NOT NULL,
-  num_error     INT                NOT NULL,
   num_skipped   INT                NOT NULL,
   CONSTRAINT pk_testsuite PRIMARY KEY (ID),
   CONSTRAINT fk_testsuite_project_id FOREIGN KEY (fk_project_id) REFERENCES project (id),
@@ -36,6 +35,7 @@ CREATE TABLE testrun (
   fk_testsuite_id INT                                             NOT NULL,
   test_name       VARCHAR(255)                                    NOT NULL,
   result          ENUM ('success', 'failure', 'error', 'skipped') NOT NULL,
+  duration        BIGINT                                          NOT NULL,
   output          CLOB,
   errorType       VARCHAR(255),
   errorMessage    VARCHAR(255),

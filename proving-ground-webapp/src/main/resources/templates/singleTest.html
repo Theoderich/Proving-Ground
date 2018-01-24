@@ -11,19 +11,19 @@
 </head>
 <body>
 <div class="container">
-    <h3 th:text="${testExecution.test.fullName}"></h3>
+    <h3 th:text="${testRunDetails.name}"></h3>
 
-    <div th:if="${testExecution.result.success}">
+    <div th:if="${testRunDetails.result.success}">
         <h3>Success!</h3>
     </div>
-    <div th:unless="${testExecution.result.success}">
-        <pre th:text="${testExecution.executionInfo.errorType}"></pre>
+    <div th:unless="${testRunDetails.result.success}">
+        <pre th:text="${testRunDetails.errorType}"></pre>
         <h3>Error Message</h3>
-        <pre th:text="${testExecution.executionInfo.errorMessage}"></pre>
+        <pre th:text="${testRunDetails.errorMessage}"></pre>
         <h3>Stacktrace</h3>
-        <pre th:text="${testExecution.executionInfo.stackTrace}"></pre>
+        <pre th:text="${testRunDetails.stacktrace}"></pre>
         <h3>Standard Out</h3>
-        <pre th:text="${testExecution.executionInfo.standardOut}"></pre>
+        <pre th:text="${testRunDetails.output}"></pre>
     </div>
 </div>
 

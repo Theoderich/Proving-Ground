@@ -13,18 +13,17 @@ import java.time.LocalDateTime;
  */
 public class TestSuiteView {
 
-    private int id;
-    private int projectId;
-    private String name;
-    private LocalDateTime startTime;
-    private Status status;
-    private int num_total;
-    private int num_success;
-    private int num_failed;
-    private int num_error;
-    private int num_skipped;
+    private final int id;
+    private final int projectId;
+    private final String name;
+    private final LocalDateTime startTime;
+    private final Status status;
+    private final int num_total;
+    private final int num_success;
+    private final int num_failed;
+    private final int num_skipped;
 
-    public TestSuiteView(int id, int projectId, String name, LocalDateTime startTime, Status status, int num_total, int num_success, int num_failed, int num_error, int num_skipped) {
+    public TestSuiteView(int id, int projectId, String name, LocalDateTime startTime, Status status, int num_total, int num_success, int num_failed, int num_skipped) {
         this.id = id;
         this.projectId = projectId;
         this.name = name;
@@ -33,7 +32,6 @@ public class TestSuiteView {
         this.num_total = num_total;
         this.num_success = num_success;
         this.num_failed = num_failed;
-        this.num_error = num_error;
         this.num_skipped = num_skipped;
     }
 
@@ -67,10 +65,6 @@ public class TestSuiteView {
 
     public int getNum_failed() {
         return num_failed;
-    }
-
-    public int getNum_error() {
-        return num_error;
     }
 
     public int getNum_skipped() {

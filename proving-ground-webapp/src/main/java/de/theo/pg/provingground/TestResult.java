@@ -3,7 +3,6 @@ package de.theo.pg.provingground;
 public enum TestResult {
     SUCCESS(false),
     FAILED(true),
-    ERROR(true),
     SKIPPED(false);
 
     private final boolean failure;

@@ -75,7 +75,7 @@ public class JunitResultParser {
                 }
 
                 if (elementNotNull(testcase.getError())) {
-                    result = TestResult.ERROR;
+                    result = TestResult.FAILED;
                     Testsuite.Testcase.Error error = testcase.getError().getValue();
 
                     info = new ErrorExecutionInfo(error.getMessage(), error.getType(), error.getValue(), systemOut);

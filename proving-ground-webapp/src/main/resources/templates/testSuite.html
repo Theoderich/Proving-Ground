@@ -1,0 +1,43 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+
+    <title>Proving Grounds Projects</title>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="|Test run ${testSuite.name} from ${testSuite.startTime}|"></h1>
+
+    <a th:href="${testSuite.id} + '?failedOnly=true'" th:unless="${failedOnly}">Show only Failed Tests</a>
+    <a th:href="${testSuite.id} + '?failedOnly=false'" th:if="${failedOnly}">Show all Tests</a>
+
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">Test</th>
+            <th scope="col">time</th>
+            <th scope="col">result</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="run : ${testRuns}">
+            <td><a th:text="${run.name}"
+                   th:href="@{|${#httpServletRequest.requestURI}/${run.id}|}"></a>
+            </td>
+            <td th:text="${run.duration.toMillis()} + 'ms'"></td>
+            <td> <span th:classappend="${run.result.success} ? 'badge-success' :  'badge-danger'"
+                       th:text="${run.result.success} ? 'success' : 'failed'" class="badge"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

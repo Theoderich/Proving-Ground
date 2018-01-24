@@ -1,9 +1,11 @@
 package de.theo.pg.provingground.mvc;
 
 import de.theo.pg.provingground.ElementNotFoundException;
-import de.theo.pg.provingground.Project;
-import de.theo.pg.provingground.TestExecution;
-import de.theo.pg.provingground.TestRun;
+import de.theo.pg.provingground.TestResult;
+import de.theo.pg.provingground.dto.ProjectView;
+import de.theo.pg.provingground.dto.TestRunDetailsView;
+import de.theo.pg.provingground.dto.TestRunView;
+import de.theo.pg.provingground.dto.TestSuiteView;
 import de.theo.pg.provingground.persistence.Persistence;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,37 +28,63 @@ public class ProjectsController {
 
     @GetMapping
     public ModelAndView listProjects() {
-        List<String> projectNames = persistence.findProjectNames();
-        return new ModelAndView("projects", "projectNames", projectNames);
+        List<ProjectView> allProjects = persistence.listAllProjects();
+        return new ModelAndView("projects", "allProjects", allProjects);
     }
 
-    @GetMapping("{projectName}")
-    public ModelAndView projectView(@PathVariable("projectName") String projectName) {
-        Project project = persistence.findProject(projectName);
-        return new ModelAndView("project", "project", project);
+    @GetMapping("{projectId}")
+    public ModelAndView projectView(@PathVariable("projectId") int projectId) throws ElementNotFoundException {
+        ProjectView project = persistence.findProject(projectId);
+        List<TestSuiteView> testSuites = persistence.findTestSuitesForProject(projectId);
+        ModelAndView modelAndView = new ModelAndView("project");
+        modelAndView.addObject("project", project);
+        modelAndView.addObject("testSuites", testSuites);
+        return modelAndView;
+
     }
 
-    @GetMapping("{projectName}/{runIndex}")
-    public ModelAndView runView(@PathVariable("projectName") String projectName,
-                                @PathVariable("runIndex") long runIndex,
-                                @QueryParam("failedOnly") boolean failedOnly) throws ElementNotFoundException {
-        Project project = persistence.findProject(projectName);
-        TestRun testRun = project.getTestRun(runIndex);
-        ModelAndView modelAndView = new ModelAndView("testRun");
-        modelAndView.addObject("testRun", testRun);
+    @GetMapping("{projectId}/{runId}")
+    public ModelAndView testSuiteView(@PathVariable("projectId") int projectId,
+                                      @PathVariable("runId") int runId,
+                                      @QueryParam("failedOnly") boolean failedOnly) throws ElementNotFoundException {
+        ProjectView project = persistence.findProject(projectId);
+        TestSuiteView testSuite = persistence.findTestSuite(runId);
+        List<TestRunView> testRunsForSuite;
+        if (failedOnly) {
+            testRunsForSuite = persistence.findTestRunsForSuite(runId, TestResult.FAILED);
+        } else {
+            testRunsForSuite = persistence.findTestRunsForSuite(runId);
+        }
+
+        if (testSuite.getProjectId() != projectId) {
+            throw new ElementNotFoundException("testSuite is not part of this project");
+        }
+        ModelAndView modelAndView = new ModelAndView("testSuite");
+        modelAndView.addObject("project", project);
+        modelAndView.addObject("testSuite", testSuite);
+        modelAndView.addObject("testRuns", testRunsForSuite);
         modelAndView.addObject("failedOnly", failedOnly);
         return modelAndView;
     }
 
-    @GetMapping("{projectName}/{runIndex}/{testName:.+}")
-    public ModelAndView singleTestView(@PathVariable("projectName") String projectName,
-                                       @PathVariable("runIndex") long runIndex,
-                                       @PathVariable("testName") String testName) throws ElementNotFoundException {
-        Project project = persistence.findProject(projectName);
-        TestRun testRun = project.getTestRun(runIndex);
-        TestExecution testExecution = testRun.getTestExecution(testName);
+    @GetMapping("{projectId}/{runId}/{testId}")
+    public ModelAndView singleTestView(@PathVariable("projectId") int projectId,
+                                       @PathVariable("runId") int runId,
+                                       @PathVariable("testId") int testId) throws ElementNotFoundException {
+        ProjectView project = persistence.findProject(projectId);
+        TestSuiteView testSuite = persistence.findTestSuite(runId);
+        TestRunDetailsView runDetailsView = persistence.findTestRun(testId);
+        if (testSuite.getProjectId() != projectId) {
+            throw new ElementNotFoundException("testSuite is not part of this project");
+        }
+        if (runDetailsView.getTestSuiteId() != runId) {
+            throw new ElementNotFoundException("testRun is not part of this testSuite");
+        }
         ModelAndView modelAndView = new ModelAndView("singleTest");
-        modelAndView.addObject("testExecution", testExecution);
+        modelAndView.addObject("project", project);
+        modelAndView.addObject("testSuite", testSuite);
+        modelAndView.addObject("testRunDetails", runDetailsView);
+
         return modelAndView;
     }
 }
