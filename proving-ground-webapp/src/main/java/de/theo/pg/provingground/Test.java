@@ -4,17 +4,10 @@ import java.util.Objects;
 
 public class Test {
 
-    private final String pkg;
     private final String name;
-    private final String classname;
 
-    private TestRun lastSuccess;
-
-
-    public Test(String pkg, String classname, String name) {
-        this.pkg = pkg;
+    public Test(String name) {
         this.name = name;
-        this.classname = classname;
     }
 
     @Override
@@ -22,27 +15,22 @@ public class Test {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Test test = (Test) o;
-        return Objects.equals(pkg, test.pkg) &&
-                Objects.equals(name, test.name) &&
-                Objects.equals(classname, test.classname);
+        return Objects.equals(name, test.name);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(pkg, name, classname);
+        return Objects.hash( name);
     }
 
     @Override
     public String toString() {
         return "Test{" +
-                "pkg='" + pkg + '\'' +
                 ", name='" + name + '\'' +
-                ", classname='" + classname + '\'' +
                 '}';
     }
 
     public String getFullName() {
-        return pkg + ":" + classname + ":" + name;
+        return name;
     }
 }

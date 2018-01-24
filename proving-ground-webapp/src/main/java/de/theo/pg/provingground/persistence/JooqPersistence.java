@@ -1,14 +1,15 @@
 package de.theo.pg.provingground.persistence;
 
 import de.theo.pg.provingground.*;
-import de.theo.pg.provingground.dto.*;
+import de.theo.pg.provingground.dto.ProjectView;
+import de.theo.pg.provingground.dto.TestRunDetailsView;
+import de.theo.pg.provingground.dto.TestRunView;
+import de.theo.pg.provingground.dto.TestSuiteView;
 import de.theo.pg.provingground.info.ExecutionInfo;
 import org.jooq.DSLContext;
-import org.jooq.impl.EnumConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -72,16 +73,16 @@ public class JooqPersistence implements Persistence {
         } else {
             db.update(PROJECT).set(PROJECT.STATUS, source.getStatus());
         }
-        SortedSet<TestRun> testRuns = source.getTestRuns();
+        SortedSet<TestSuite> testSuites = source.getTestSuites();
         long finalProjectId = projectId;
-        testRuns.forEach(run -> insertTestSuite(run, finalProjectId));
+        testSuites.forEach(run -> insertTestSuite(run, finalProjectId));
     }
 
-    private void insertTestSuite(TestRun testSuite, long projectId) {
+    private void insertTestSuite(TestSuite testSuite, long projectId) {
         long nextId = db.nextval(S_ID);
         db.insertInto(TESTSUITE, TESTSUITE.ID, TESTSUITE.FK_PROJECT_ID, TESTSUITE.NAME, TESTSUITE.STATUS, TESTSUITE.START_TIME,
                 TESTSUITE.NUM_FAILED, TESTSUITE.NUM_SKIPPED, TESTSUITE.NUM_SUCCESS, TESTSUITE.NUM_TOTAL)
-                .values(nextId, projectId, "TODO_NAMING", testSuite.getStatus(), testSuite.getStart(),
+                .values(nextId, projectId, "TODO_NAMING" + nextId, testSuite.getStatus(), testSuite.getStart(),
                         testSuite.getNumberOfFailedTests(), testSuite.getNumberOfSkippedTests(), testSuite.getNumberOfSuccessfulTests(),
                         testSuite.getTotalNumberOfTests()).execute();
 

@@ -59,7 +59,7 @@ public class JunitResultParser {
                 String clazz = matcher.group(2);
                 String testName = testcase.getName();
 
-                Test test = new Test(pkg, clazz, testName);
+                Test test = new Test(pkg + ":" + clazz + ":" + testName);
                 String time = testcase.getTime();
                 time = time.replaceAll(",", "");
 

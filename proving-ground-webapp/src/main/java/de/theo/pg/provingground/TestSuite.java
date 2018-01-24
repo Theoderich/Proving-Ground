@@ -6,9 +6,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TestRun implements Comparable<TestRun> {
-
-    private final long index;
+public class TestSuite implements Comparable<TestSuite> {
 
     private final LocalDateTime start;
 
@@ -21,8 +19,7 @@ public class TestRun implements Comparable<TestRun> {
     private Status status;
 
 
-    public TestRun(long index, LocalDateTime start) {
-        this.index = index;
+    public TestSuite(LocalDateTime start) {
         this.start = start;
         this.status = Status.OK;
 
@@ -53,10 +50,6 @@ public class TestRun implements Comparable<TestRun> {
 
     public LocalDateTime getStart() {
         return start;
-    }
-
-    public long getIndex() {
-        return index;
     }
 
     public Status getStatus() {
@@ -107,31 +100,29 @@ public class TestRun implements Comparable<TestRun> {
     }
 
     @Override
-    public int compareTo(TestRun other) {
-        return Long.compare(this.index, other.index);
+    public int compareTo(TestSuite other) {
+        return this.start.compareTo(other.start);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TestRun testRun = (TestRun) o;
-        return index == testRun.index &&
-                Objects.equals(start, testRun.start) &&
-                Objects.equals(testExecutions, testRun.testExecutions) &&
-                status == testRun.status;
+        TestSuite testSuite = (TestSuite) o;
+        return  Objects.equals(start, testSuite.start) &&
+                Objects.equals(testExecutions, testSuite.testExecutions) &&
+                status == testSuite.status;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(index, start, testExecutions, status);
+        return Objects.hash(start, testExecutions, status);
     }
 
     @Override
     public String toString() {
-        return "TestRun{" +
-                "index=" + index +
+        return "TestSuite{" +
                 ", start=" + start +
                 ", testExecutions=" + testExecutions +
                 ", status=" + status +

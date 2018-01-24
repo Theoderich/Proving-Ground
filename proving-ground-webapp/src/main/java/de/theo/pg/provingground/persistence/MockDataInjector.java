@@ -2,7 +2,7 @@ package de.theo.pg.provingground.persistence;
 
 import de.theo.pg.provingground.Project;
 import de.theo.pg.provingground.TestExecution;
-import de.theo.pg.provingground.TestRun;
+import de.theo.pg.provingground.TestSuite;
 import de.theo.pg.provingground.parse.surefire.JunitResultParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -31,14 +31,14 @@ public class MockDataInjector implements ApplicationListener<ApplicationReadyEve
         this.persistence = persistence;
 
         project = new Project("MyLittleProject");
-        TestRun testRun1 = new TestRun(1, START_RUN_1);
+        TestSuite testSuite1 = new TestSuite(START_RUN_1);
         Path testPath = Paths.get(ClassLoader.getSystemResource("input").toURI());
         JunitResultParser junitResultParser = new JunitResultParser();
 
         List<TestExecution> parse = junitResultParser.parse(testPath);
 
-        testRun1.addExecutions(parse);
-        project.addTestRun(testRun1);
+        testSuite1.addExecutions(parse);
+        project.addTestRun(testSuite1);
     }
 
     @Override

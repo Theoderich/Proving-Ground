@@ -10,38 +10,30 @@ public class Project {
     private final String name;
 
     private final Set<Test> knownTests;
-    private final SortedSet<TestRun> testRuns;
+    private final SortedSet<TestSuite> testSuites;
 
 
     public Project(String name) {
         this.name = name;
         this.knownTests = new HashSet<>();
-        this.testRuns = new TreeSet<>();
+        this.testSuites = new TreeSet<>();
     }
 
-    public void addTestRun(TestRun newTestRun) {
-        this.testRuns.add(newTestRun);
-        this.knownTests.addAll(newTestRun.getAllExecutedTests());
+    public void addTestRun(TestSuite newTestSuite) {
+        this.testSuites.add(newTestSuite);
+        this.knownTests.addAll(newTestSuite.getAllExecutedTests());
     }
 
     public String getName() {
         return name;
     }
 
-    public SortedSet<TestRun> getTestRuns() {
-        return Collections.unmodifiableSortedSet(testRuns);
-    }
-
-    public TestRun getTestRun(long index) throws ElementNotFoundException {
-        Optional<TestRun> run = testRuns.stream().filter(testRun -> testRun.getIndex() == index).findFirst();
-        if (!run.isPresent()) {
-            throw new ElementNotFoundException();
-        }
-        return run.get();
+    public SortedSet<TestSuite> getTestSuites() {
+        return Collections.unmodifiableSortedSet(testSuites);
     }
 
     public Status getStatus() {
-        return testRuns.last().getStatus();
+        return testSuites.last().getStatus();
     }
 
     @Override
