@@ -1,12 +1,10 @@
 package de.theo.pg.provingground.input;
 
-import de.theo.pg.provingground.TestResult;
-
 import java.time.Duration;
 
 public class TestRunInput {
     private String name;
-    private TestResult result;
+    private TestResultInput result;
     private Duration duration;
     private String output;
     private String errorType;
@@ -22,11 +20,11 @@ public class TestRunInput {
         this.name = name;
     }
 
-    public TestResult getResult() {
+    public TestResultInput getResult() {
         return result;
     }
 
-    public void setResult(TestResult result) {
+    public void setResult(TestResultInput result) {
         this.result = result;
     }
 

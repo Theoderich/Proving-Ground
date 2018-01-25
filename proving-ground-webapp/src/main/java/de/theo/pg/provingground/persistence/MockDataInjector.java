@@ -2,6 +2,7 @@ package de.theo.pg.provingground.persistence;
 
 import de.theo.pg.provingground.TestExecution;
 import de.theo.pg.provingground.info.ExecutionInfo;
+import de.theo.pg.provingground.input.TestResultInput;
 import de.theo.pg.provingground.input.TestRunInput;
 import de.theo.pg.provingground.input.TestSuiteInput;
 import de.theo.pg.provingground.parse.surefire.JunitResultParser;
@@ -50,7 +51,7 @@ public class MockDataInjector implements ApplicationListener<ApplicationReadyEve
             TestRunInput testRunInput = new TestRunInput();
             testRunInput.setName(testExecution.getTest().getFullName());
             testRunInput.setDuration(testExecution.getExecutionTime());
-            testRunInput.setResult(testExecution.getResult());
+            testRunInput.setResult(TestResultInput.valueOf(testExecution.getResult().name()));
             ExecutionInfo info = testExecution.getExecutionInfo();
             testRunInput.setOutput(info.getStandardOut());
             testRunInput.setErrorType(info.getErrorType());
