@@ -27,7 +27,6 @@ CREATE TABLE testsuite (
   num_skipped   INT         NOT NULL,
   CONSTRAINT pk_testsuite PRIMARY KEY (ID),
   CONSTRAINT fk_testsuite_project_id FOREIGN KEY (fk_project_id) REFERENCES project (id),
-  CONSTRAINT u_testsuite_name UNIQUE (fk_project_id, name)
 );
 
 CREATE TABLE testrun (
