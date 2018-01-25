@@ -11,6 +11,8 @@
     <modules>
         <module>proving-ground-webapp</module>
         <module>input-api</module>
+        <module>proving-ground-maven-plugin</module>
+        <module>surefire-scanner</module>
     </modules>
 
     <name>proving-ground</name>

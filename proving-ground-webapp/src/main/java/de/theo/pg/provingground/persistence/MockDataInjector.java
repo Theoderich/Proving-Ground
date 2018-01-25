@@ -38,28 +38,13 @@ public class MockDataInjector implements ApplicationListener<ApplicationReadyEve
         testSuiteInput.setTestSuiteName("MyLittleTestRun");
         testSuiteInput.setStartTime(START_RUN_1);
 
-        List<TestRunInput> testRunInputList = new ArrayList<>();
-
-
 
         Path testPath = Paths.get(ClassLoader.getSystemResource("input").toURI());
         JunitResultParser junitResultParser = new JunitResultParser();
 
-        List<TestExecution> parse = junitResultParser.parse(testPath);
+        List<TestRunInput> parse = junitResultParser.parse(testPath);
 
-        for (TestExecution testExecution : parse) {
-            TestRunInput testRunInput = new TestRunInput();
-            testRunInput.setName(testExecution.getTest().getFullName());
-            testRunInput.setDuration(testExecution.getExecutionTime());
-            testRunInput.setResult(TestResultInput.valueOf(testExecution.getResult().name()));
-            ExecutionInfo info = testExecution.getExecutionInfo();
-            testRunInput.setOutput(info.getStandardOut());
-            testRunInput.setErrorType(info.getErrorType());
-            testRunInput.setErrorMessage(info.getErrorMessage());
-            testRunInput.setOutput(info.getStandardOut());
-            testRunInputList.add(testRunInput);
-        }
-        testSuiteInput.setTestRuns(testRunInputList);
+        testSuiteInput.setTestRuns(parse);
     }
 
     @Override

@@ -29,6 +29,11 @@
             <artifactId>input-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.theo.pg</groupId>
+            <artifactId>surefire-scanner</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -96,23 +101,7 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <id>xjc</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- The package of your generated sources -->
-                    <packageName>de.theo.pg.provingground.parse.surefire.xsd</packageName>
-                </configuration>
-            </plugin>
+          
             <!-- The H2 test schema is loaded here -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -1,11 +1,7 @@
 package de.theo.pg.provingground.parse.surefire;
 
-import de.theo.pg.provingground.Test;
-import de.theo.pg.provingground.TestExecution;
-import de.theo.pg.provingground.TestResult;
-import de.theo.pg.provingground.info.ErrorExecutionInfo;
-import de.theo.pg.provingground.info.ExecutionInfo;
-import de.theo.pg.provingground.info.SuccessExecutionInfo;
+import de.theo.pg.provingground.input.TestResultInput;
+import de.theo.pg.provingground.input.TestRunInput;
 import de.theo.pg.provingground.parse.surefire.xsd.Testsuite;
 
 import javax.xml.bind.JAXBContext;
@@ -32,7 +28,7 @@ public class JunitResultParser {
     private static final Pattern TEST_NAME_PATTERN = Pattern.compile("(\\w+[\\w.]+)\\.(\\w+)");
 
 
-    public List<TestExecution> parse(Path sourcePath) throws IOException {
+    public List<TestRunInput> parse(Path sourcePath) throws IOException {
 
         Stream<Path> allXmlFiles = Files.find(sourcePath, 1, ((path, basicFileAttributes) -> basicFileAttributes.isRegularFile() && SUREFIRE_FILENAME_PATTERN.matcher(path.getFileName().toString()).matches()));
 
@@ -41,8 +37,8 @@ public class JunitResultParser {
     }
 
 
-    private Stream<TestExecution> parseFile(Path path) {
-        List<TestExecution> executionsInFile = new ArrayList<>();
+    private Stream<TestRunInput> parseFile(Path path) {
+        List<TestRunInput> executionsInFile = new ArrayList<>();
         Unmarshaller unmarshaller = getUnmarshaller();
 
         try (InputStream inputStream = Files.newInputStream(path);) {
@@ -59,38 +55,37 @@ public class JunitResultParser {
                 String clazz = matcher.group(2);
                 String testName = testcase.getName();
 
-                Test test = new Test(pkg + ":" + clazz + ":" + testName);
+                TestRunInput testRunInput = new TestRunInput();
+                testRunInput.setName(pkg + ":" + clazz + ":" + testName);
                 String time = testcase.getTime();
                 time = time.replaceAll(",", "");
 
                 BigDecimal timeInSeconds = new BigDecimal(time);
                 BigDecimal timeInMillis = timeInSeconds.multiply(BigDecimal.valueOf(1000));
                 Duration executionTime = Duration.ofMillis(timeInMillis.longValue());
-                TestResult result;
-                ExecutionInfo info;
-
-                String systemOut = "";
+                testRunInput.setDuration(executionTime);
                 if (elementNotNull(testcase.getSystemOut())) {
-                    systemOut = testcase.getSystemOut().getValue().toString();
+                    testRunInput.setOutput(testcase.getSystemOut().getValue().toString());
                 }
 
                 if (elementNotNull(testcase.getError())) {
-                    result = TestResult.FAILED;
                     Testsuite.Testcase.Error error = testcase.getError().getValue();
-
-                    info = new ErrorExecutionInfo(error.getMessage(), error.getType(), error.getValue(), systemOut);
+                    testRunInput.setResult(TestResultInput.FAILED);
+                    testRunInput.setErrorMessage(error.getMessage());
+                    testRunInput.setErrorType(error.getType());
+                    testRunInput.setStacktrace(error.getValue());
                 } else if (testcase.getFailure().size() > 0) {
-                    result = TestResult.FAILED;
+                    testRunInput.setResult(TestResultInput.FAILED);
                     Testsuite.Testcase.Failure failure = testcase.getFailure().get(0);
-                    info = new ErrorExecutionInfo(failure.getMessage(), failure.getType(), failure.getValue(), systemOut);
+                    testRunInput.setErrorMessage(failure.getMessage());
+                    testRunInput.setErrorType(failure.getType());
+                    testRunInput.setStacktrace(failure.getValue());
                 } else if (elementNotNull(testcase.getSkipped())) {
-                    result = TestResult.SKIPPED;
-                    info = new SuccessExecutionInfo(systemOut);
+                    testRunInput.setResult(TestResultInput.SKIPPED);
                 } else {
-                    result = TestResult.SUCCESS;
-                    info = new SuccessExecutionInfo(systemOut);
+                    testRunInput.setResult(TestResultInput.SUCCESS);
                 }
-                executionsInFile.add(new TestExecution(test, result, executionTime, info));
+                executionsInFile.add(testRunInput);
             }
 
         } catch (IOException | JAXBException e) {
