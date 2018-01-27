@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,7 +24,6 @@ public class JunitResultParser {
 
     private static final JAXBContext CONTEXT = initJaxbContext();
     private static final Pattern SUREFIRE_FILENAME_PATTERN = Pattern.compile("^TEST-.+\\.xml$");
-    private static final Pattern TEST_NAME_PATTERN = Pattern.compile("(\\w+[\\w.]+)\\.(\\w+)");
 
 
     public List<TestRunInput> parse(Path sourcePath) throws IOException {
@@ -47,16 +45,10 @@ public class JunitResultParser {
 
             for (Testsuite.Testcase testcase : unmarshal.getTestcase()) {
                 String classname = testcase.getClassname();
-                Matcher matcher = TEST_NAME_PATTERN.matcher(classname);
-                if (!matcher.matches()) {
-                    throw new IllegalStateException("Invalid classname in surefire report: " + path + " classname was " + classname);
-                }
-                String pkg = matcher.group(1);
-                String clazz = matcher.group(2);
                 String testName = testcase.getName();
 
                 TestRunInput testRunInput = new TestRunInput();
-                testRunInput.setName(pkg + ":" + clazz + ":" + testName);
+                testRunInput.setName(classname + ":" + testName);
                 String time = testcase.getTime();
                 time = time.replaceAll(",", "");
 
