@@ -2,6 +2,7 @@ package de.theo.pg.maven.plugin;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.theo.pg.provingground.input.TestRunInput;
 import de.theo.pg.provingground.input.TestSuiteInput;
 import de.theo.pg.provingground.parse.surefire.JunitResultParser;
@@ -90,6 +91,7 @@ public class ReportTestsMojo extends AbstractMojo {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
             ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
             mapper.writeValue((DataOutput) wr, suiteInput);
             wr.flush();
