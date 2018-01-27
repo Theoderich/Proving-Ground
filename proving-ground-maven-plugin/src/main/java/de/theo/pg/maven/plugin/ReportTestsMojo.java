@@ -23,10 +23,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
-@Mojo(name = "report")
+@Mojo(name = "report", aggregator = true)
 @Execute(phase = LifecyclePhase.NONE)
 public class ReportTestsMojo extends AbstractMojo {
 
@@ -47,7 +47,7 @@ public class ReportTestsMojo extends AbstractMojo {
     @Parameter(defaultValue = "${reactorProjects}", readonly = true)
     private List<MavenProject> reactorProjects;
 
-    @Parameter(defaultValue = "${reactorProjects}", readonly = true)
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     private List<File> resolvedReportsDirectories;
@@ -70,6 +70,7 @@ public class ReportTestsMojo extends AbstractMojo {
             List<TestRunInput> allRuns = new ArrayList<>();
             for (File directory : directories) {
                 try {
+                    getLog().info("Scanning directory " + directory);
                     List<TestRunInput> parse = parser.parse(directory.toPath());
                     allRuns.addAll(parse);
                 } catch (IOException e) {
@@ -114,12 +115,16 @@ public class ReportTestsMojo extends AbstractMojo {
             return resolvedReportsDirectories;
         }
 
-        resolvedReportsDirectories = new ArrayList<File>();
+        resolvedReportsDirectories = new ArrayList<>();
+        getLog().info("Configured reportsDirectories: " + Arrays.toString(reportsDirectories));
 
         if (this.reportsDirectories != null) {
-            Collections.addAll(resolvedReportsDirectories, this.reportsDirectories);
+            for (File reportsDirectory : reportsDirectories) {
+                addReportsDirIfExists(reportsDirectory);
+            }
         }
         if (!project.isExecutionRoot()) {
+            getLog().info("This project is not the execution root, skipping!");
             return null;
         }
         // Multiple report directories are configured.
@@ -127,19 +132,26 @@ public class ReportTestsMojo extends AbstractMojo {
         String parentBaseDir = project.getBasedir().getAbsolutePath();
         for (MavenProject subProject : getProjectsWithoutRoot()) {
             String moduleBaseDir = subProject.getBasedir().getAbsolutePath();
+            getLog().info("Found module: " + moduleBaseDir);
             for (File reportsDirectory1 : this.reportsDirectories) {
                 String reportDir = reportsDirectory1.getPath();
                 if (reportDir.startsWith(parentBaseDir)) {
                     reportDir = reportDir.substring(parentBaseDir.length());
                 }
                 File reportsDirectory = new File(moduleBaseDir, reportDir);
-                if (reportsDirectory.exists() && reportsDirectory.isDirectory()) {
-                    getLog().debug("Adding report dir : " + moduleBaseDir + reportDir);
-                    resolvedReportsDirectories.add(reportsDirectory);
-                }
+                addReportsDirIfExists(reportsDirectory);
             }
         }
         return resolvedReportsDirectories;
+    }
+
+    private void addReportsDirIfExists(File reportsDirectory) {
+        if (reportsDirectory.exists() && reportsDirectory.isDirectory()) {
+            getLog().info("Adding report dir : " + reportsDirectory);
+            resolvedReportsDirectories.add(reportsDirectory);
+        } else {
+            getLog().info("Reports directory not found: " + reportsDirectory);
+        }
     }
 
     private List<MavenProject> getProjectsWithoutRoot() {
@@ -189,5 +201,9 @@ public class ReportTestsMojo extends AbstractMojo {
 
     public void setReactorProjects(List<MavenProject> reactorProjects) {
         this.reactorProjects = reactorProjects;
+    }
+
+    public void setProject(MavenProject project) {
+        this.project = project;
     }
 }
