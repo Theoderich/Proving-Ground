@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 public class TestSuite implements Comparable<TestSuite> {
 
     private final LocalDateTime start;
+    private final String name;
 
     private final Set<TestExecution> testExecutions;
     private final Set<TestExecution> successTests;
@@ -19,8 +20,9 @@ public class TestSuite implements Comparable<TestSuite> {
     private Status status;
 
 
-    public TestSuite(LocalDateTime start) {
+    public TestSuite(LocalDateTime start, String name) {
         this.start = start;
+        this.name = name;
         this.status = Status.OK;
 
         testExecutions = new HashSet<>();
@@ -82,6 +84,9 @@ public class TestSuite implements Comparable<TestSuite> {
         return Collections.unmodifiableSet(failedTests);
     }
 
+    public String getName() {
+        return name;
+    }
 
     public int getTotalNumberOfTests(){
         return testExecutions.size();

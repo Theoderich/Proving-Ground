@@ -30,7 +30,7 @@ public class InputController implements InputApi {
     @PostMapping
     public void addNewTestRun(@RequestBody TestSuiteInput testSuiteInput) {
         Project project = new Project(testSuiteInput.getProjectName());
-        TestSuite testSuite = new TestSuite(testSuiteInput.getStartTime());
+        TestSuite testSuite = new TestSuite(testSuiteInput.getStartTime(), testSuiteInput.getTestSuiteName());
         List<TestExecution> testExecutions = testSuiteInput.getTestRuns().stream().map(this::mapTestRun).collect(Collectors.toList());
 
         testSuite.addExecutions(testExecutions);

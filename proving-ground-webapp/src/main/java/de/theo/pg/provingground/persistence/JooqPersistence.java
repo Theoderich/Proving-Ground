@@ -82,7 +82,7 @@ public class JooqPersistence implements Persistence {
         long nextId = db.nextval(S_ID);
         db.insertInto(TESTSUITE, TESTSUITE.ID, TESTSUITE.FK_PROJECT_ID, TESTSUITE.NAME, TESTSUITE.STATUS, TESTSUITE.START_TIME,
                 TESTSUITE.NUM_FAILED, TESTSUITE.NUM_SKIPPED, TESTSUITE.NUM_SUCCESS, TESTSUITE.NUM_TOTAL)
-                .values(nextId, projectId, "TODO_NAMING" + nextId, testSuite.getStatus(), testSuite.getStart(),
+                .values(nextId, projectId, testSuite.getName(), testSuite.getStatus(), testSuite.getStart(),
                         testSuite.getNumberOfFailedTests(), testSuite.getNumberOfSkippedTests(), testSuite.getNumberOfSuccessfulTests(),
                         testSuite.getTotalNumberOfTests()).execute();
 
