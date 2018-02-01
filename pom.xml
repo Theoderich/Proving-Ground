@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -24,6 +24,17 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>dtag-agis-psap-maven-release</id>
+            <url>https://artifactory.qaware.de:443/artifactory/dtag-agis-psap-maven-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>dtag-agis-psap-maven-snapshot</id>
+            <url>https://artifactory.qaware.de:443/artifactory/dtag-agis-psap-maven-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 
 </project>
