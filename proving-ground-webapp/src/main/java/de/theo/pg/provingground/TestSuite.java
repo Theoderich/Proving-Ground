@@ -10,6 +10,8 @@ public class TestSuite implements Comparable<TestSuite> {
 
     private final LocalDateTime start;
     private final String name;
+    private final String commitId;
+    private final String branchName;
 
     private final Set<TestExecution> testExecutions;
     private final Set<TestExecution> successTests;
@@ -20,9 +22,11 @@ public class TestSuite implements Comparable<TestSuite> {
     private Status status;
 
 
-    public TestSuite(LocalDateTime start, String name) {
+    public TestSuite(LocalDateTime start, String name, String commitId, String branchName) {
         this.start = start;
         this.name = name;
+        this.commitId = commitId;
+        this.branchName = branchName;
         this.status = Status.OK;
 
         testExecutions = new HashSet<>();
@@ -102,6 +106,14 @@ public class TestSuite implements Comparable<TestSuite> {
 
     public int getNumberOfSkippedTests() {
         return skippedTests.size();
+    }
+
+    public String getCommitId() {
+        return commitId;
+    }
+
+    public String getBranchName() {
+        return branchName;
     }
 
     @Override

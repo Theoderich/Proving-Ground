@@ -17,17 +17,21 @@ public class TestSuiteView {
     private final long projectId;
     private final String name;
     private final LocalDateTime startTime;
+    private final String commitId;
+    private final String branch;
     private final Status status;
     private final int num_total;
     private final int num_success;
     private final int num_failed;
     private final int num_skipped;
 
-    public TestSuiteView(long id, long projectId, String name, LocalDateTime startTime, Status status, int num_total, int num_success, int num_failed, int num_skipped) {
+    public TestSuiteView(long id, long projectId, String name, LocalDateTime startTime, String commitId, String branch, Status status, int num_total, int num_success, int num_failed, int num_skipped) {
         this.id = id;
         this.projectId = projectId;
         this.name = name;
         this.startTime = startTime;
+        this.commitId = commitId;
+        this.branch = branch;
         this.status = status;
         this.num_total = num_total;
         this.num_success = num_success;
@@ -49,6 +53,14 @@ public class TestSuiteView {
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public String getCommitId() {
+        return commitId;
+    }
+
+    public String getBranch() {
+        return branch;
     }
 
     public Status getStatus() {

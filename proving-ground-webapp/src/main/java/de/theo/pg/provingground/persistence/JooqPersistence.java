@@ -81,8 +81,10 @@ public class JooqPersistence implements Persistence {
     private void insertTestSuite(TestSuite testSuite, long projectId) {
         long nextId = db.nextval(S_ID);
         db.insertInto(TESTSUITE, TESTSUITE.ID, TESTSUITE.FK_PROJECT_ID, TESTSUITE.NAME, TESTSUITE.STATUS, TESTSUITE.START_TIME,
+                TESTSUITE.COMMITID, TESTSUITE.BRANCH,
                 TESTSUITE.NUM_FAILED, TESTSUITE.NUM_SKIPPED, TESTSUITE.NUM_SUCCESS, TESTSUITE.NUM_TOTAL)
                 .values(nextId, projectId, testSuite.getName(), testSuite.getStatus(), testSuite.getStart(),
+                        testSuite.getCommitId(), testSuite.getBranchName(),
                         testSuite.getNumberOfFailedTests(), testSuite.getNumberOfSkippedTests(), testSuite.getNumberOfSuccessfulTests(),
                         testSuite.getTotalNumberOfTests()).execute();
 

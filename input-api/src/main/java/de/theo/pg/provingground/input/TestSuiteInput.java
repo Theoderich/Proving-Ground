@@ -7,6 +7,8 @@ public class TestSuiteInput {
 
     private String projectName;
     private String testSuiteName;
+    private String commitIdentifier;
+    private String branchName;
     private LocalDateTime startTime;
 
     private List<TestRunInput> testRuns;
@@ -41,5 +43,21 @@ public class TestSuiteInput {
 
     public void setTestRuns(List<TestRunInput> testRuns) {
         this.testRuns = testRuns;
+    }
+
+    public String getCommitIdentifier() {
+        return commitIdentifier;
+    }
+
+    public void setCommitIdentifier(String commitIdentifier) {
+        this.commitIdentifier = commitIdentifier;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 }

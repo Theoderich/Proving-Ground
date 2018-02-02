@@ -18,6 +18,8 @@
         <thead>
         <tr>
             <th scope="col">run</th>
+            <th scope="col">commit</th>
+            <th scope="col">branch</th>
             <th scope="col">timestamp</th>
             <th scope="col">result</th>
         </tr>
@@ -26,6 +28,8 @@
             <td>
                 <a th:href="${suite.id}" th:text="${suite.name}"></a>
             </td>
+            <td th:text="${suite.commitId}"></td>
+            <td th:text="${suite.branch}"></td>
             <td th:text="${suite.startTime}">
             </td>
             <td>

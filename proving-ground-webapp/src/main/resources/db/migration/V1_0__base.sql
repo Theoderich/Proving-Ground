@@ -1,8 +1,3 @@
-DROP TABLE IF EXISTS project;
-DROP TABLE IF EXISTS testsuite;
-DROP TABLE IF EXISTS testrun;
-
-DROP SEQUENCE IF EXISTS s_id;
 CREATE SEQUENCE s_id
   START WITH 1;
 
@@ -19,8 +14,6 @@ CREATE TABLE testsuite (
   id            BIGINT       NOT NULL,
   fk_project_id BIGINT       NOT NULL,
   name          VARCHAR(255) NOT NULL,
-  commitId      VARCHAR(250),
-  branch        VARCHAR(250),
   start_time    TIMESTAMP    NOT NULL,
   status        INT          NOT NULL,
   num_total     INT          NOT NULL,

@@ -42,6 +42,12 @@ public class ReportTestsMojo extends AbstractMojo {
     @Parameter(property = "runName", required = true)
     private String runName;
 
+    @Parameter(property = "commitId", required = false)
+    private String commitId;
+
+    @Parameter(property = "branchName", required = false)
+    private String branchName;
+
     @Parameter(required = true)
     private File[] reportsDirectories;
 
@@ -83,6 +89,8 @@ public class ReportTestsMojo extends AbstractMojo {
             suiteInput.setProjectName(getProjectName());
             suiteInput.setTestSuiteName(getRunName());
             suiteInput.setStartTime(LocalDateTime.now());
+            suiteInput.setCommitIdentifier(commitId);
+            suiteInput.setBranchName(branchName);
             suiteInput.setTestRuns(allRuns);
 
 
@@ -207,5 +215,21 @@ public class ReportTestsMojo extends AbstractMojo {
 
     public void setProject(MavenProject project) {
         this.project = project;
+    }
+
+    public String getCommitId() {
+        return commitId;
+    }
+
+    public void setCommitId(String commitId) {
+        this.commitId = commitId;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 }

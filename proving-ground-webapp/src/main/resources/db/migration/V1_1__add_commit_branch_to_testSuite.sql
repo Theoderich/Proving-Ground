@@ -1,0 +1,4 @@
+ALTER TABLE testsuite
+  ADD COLUMN commitId VARCHAR(250);
+ALTER TABLE testsuite
+  ADD COLUMN branch VARCHAR(250);
