@@ -14,12 +14,26 @@
     <h1 th:text="${project.name}"></h1>
     <h2>Test Runs</h2>
 
-    <ul class="list-group">
-      <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:each="suite : ${testSuites}" th:href="${suite.id}">
-          <th:block th:text="${suite.name}"></th:block>
-          <span th:classappend="${suite.status.ok} ? 'badge-success' :  'badge-danger'" th:text="${suite.status.ok} ? 'success' : 'failed'" class="badge"></span>
-      </a>
-    </ul>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">run</th>
+            <th scope="col">timestamp</th>
+            <th scope="col">result</th>
+        </tr>
+        </thead>
+        <tr th:each="suite : ${testSuites}">
+            <td>
+                <a th:href="${suite.id}" th:text="${suite.name}"></a>
+            </td>
+            <td th:text="${suite.startTime}">
+            </td>
+            <td>
+                <span th:classappend="${suite.status.ok} ? 'badge-success' :  'badge-danger'"
+                      th:text="${suite.status.ok} ? 'success' : 'failed'" class="badge"></span>
+            </td>
+        </tr>
+    </table>
 </div>
 
 
