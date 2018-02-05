@@ -17,7 +17,7 @@ import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @Controller
-@RequestMapping("/projects")
+@RequestMapping("/projects/")
 public class ProjectsController {
 
     private final Persistence persistence;
