@@ -6,6 +6,9 @@ import de.theo.pg.provingground.dto.TestRunDetailsView;
 import de.theo.pg.provingground.dto.TestRunView;
 import de.theo.pg.provingground.dto.TestSuiteView;
 import de.theo.pg.provingground.info.ExecutionInfo;
+import de.theo.pg.provingground.persistence.entity.tables.records.ProjectRecord;
+import de.theo.pg.provingground.persistence.entity.tables.records.TestrunRecord;
+import de.theo.pg.provingground.persistence.entity.tables.records.TestsuiteRecord;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,47 +24,60 @@ import static de.theo.pg.provingground.persistence.entity.tables.Testsuite.TESTS
 @Component
 public class JooqPersistence implements Persistence {
 
+    private final ProjectViewRecordMapper projectViewRecordMapper;
+    private final TestSuiteViewRecordMapper testSuiteViewRecordMapper;
+    private final TestRunViewRecordMapper testRunViewRecordMapper;
+    private final TestRunDetailsViewRecordMapper testRunDetailsViewRecordMapper;
+
     private DSLContext db;
 
     @Autowired
     public JooqPersistence(DSLContext db) {
         this.db = db;
+        projectViewRecordMapper = new ProjectViewRecordMapper();
+        testSuiteViewRecordMapper = new TestSuiteViewRecordMapper();
+        testRunViewRecordMapper = new TestRunViewRecordMapper();
+        testRunDetailsViewRecordMapper = new TestRunDetailsViewRecordMapper();
     }
 
     @Override
     public List<ProjectView> listAllProjects() {
-        return db.selectFrom(PROJECT).fetchInto(ProjectView.class);
+        return db.selectFrom(PROJECT).fetch().map(projectViewRecordMapper);
     }
 
     @Override
     public ProjectView findProject(long projectId) {
-        return db.selectFrom(PROJECT).where(PROJECT.ID.eq(projectId)).fetchOneInto(ProjectView.class);
+        ProjectRecord projectRecord = db.selectFrom(PROJECT).where(PROJECT.ID.eq(projectId)).fetchOne();
+        return projectViewRecordMapper.map(projectRecord);
     }
 
     @Override
     public List<TestSuiteView> findTestSuitesForProject(long projectId) {
-        return db.selectFrom(TESTSUITE).where(TESTSUITE.FK_PROJECT_ID.eq(projectId)).fetchInto(TestSuiteView.class);
+        return db.selectFrom(TESTSUITE).where(TESTSUITE.FK_PROJECT_ID.eq(projectId)).fetch().map(testSuiteViewRecordMapper);
     }
 
     @Override
     public TestSuiteView findTestSuite(long testSuiteId) {
-        return db.selectFrom(TESTSUITE).where(TESTSUITE.ID.eq(testSuiteId)).fetchOneInto(TestSuiteView.class);
+        TestsuiteRecord testsuiteRecord = db.selectFrom(TESTSUITE).where(TESTSUITE.ID.eq(testSuiteId)).fetchOne();
+        return testSuiteViewRecordMapper.map(testsuiteRecord);
     }
 
     @Override
     public List<TestRunView> findTestRunsForSuite(long testSuiteId) {
-        return db.select(TESTRUN.ID, TESTRUN.FK_TESTSUITE_ID, TESTRUN.TEST_NAME, TESTRUN.RESULT, TESTRUN.DURATION).from(TESTRUN).where(TESTRUN.FK_TESTSUITE_ID.eq(testSuiteId)).fetchInto(TestRunView.class);
+        return db.select(TESTRUN.ID, TESTRUN.FK_TESTSUITE_ID, TESTRUN.TEST_NAME, TESTRUN.RESULT, TESTRUN.DURATION).from(TESTRUN).where(TESTRUN.FK_TESTSUITE_ID.eq(testSuiteId))
+                .fetch().map(testRunViewRecordMapper);
     }
 
     @Override
     public List<TestRunView> findTestRunsForSuite(long testSuiteId, TestResult filter) throws ElementNotFoundException {
         return db.select(TESTRUN.ID, TESTRUN.FK_TESTSUITE_ID, TESTRUN.TEST_NAME, TESTRUN.RESULT, TESTRUN.DURATION).from(TESTRUN)
-                .where(TESTRUN.FK_TESTSUITE_ID.eq(testSuiteId).and(TESTRUN.RESULT.eq(filter))).fetchInto(TestRunView.class);
+                .where(TESTRUN.FK_TESTSUITE_ID.eq(testSuiteId).and(TESTRUN.RESULT.eq(filter))).fetch().map(testRunViewRecordMapper);
     }
 
     @Override
     public TestRunDetailsView findTestRun(long testRunId) {
-        return db.selectFrom(TESTRUN).where(TESTRUN.ID.eq(testRunId)).fetchOneInto(TestRunDetailsView.class);
+        TestrunRecord testrunRecord = db.selectFrom(TESTRUN).where(TESTRUN.ID.eq(testRunId)).fetchOne();
+        return testRunDetailsViewRecordMapper.map(testrunRecord);
     }
 
     @Override
@@ -69,7 +85,8 @@ public class JooqPersistence implements Persistence {
         Long projectId = getProjectIdByName(source.getName());
         if (projectId == null) {
             projectId = db.nextval(S_ID);
-            db.insertInto(PROJECT, PROJECT.ID, PROJECT.NAME, PROJECT.STATUS).values(projectId, source.getName(), source.getStatus()).execute();
+            ProjectRecord projectRecord = new ProjectRecord(projectId, source.getName(), source.getStatus());
+            db.insertInto(PROJECT).set(projectRecord).execute();
         } else {
             db.update(PROJECT).set(PROJECT.STATUS, source.getStatus());
         }
@@ -80,13 +97,12 @@ public class JooqPersistence implements Persistence {
 
     private void insertTestSuite(TestSuite testSuite, long projectId) {
         long nextId = db.nextval(S_ID);
-        db.insertInto(TESTSUITE, TESTSUITE.ID, TESTSUITE.FK_PROJECT_ID, TESTSUITE.NAME, TESTSUITE.STATUS, TESTSUITE.START_TIME,
-                TESTSUITE.COMMITID, TESTSUITE.BRANCH,
-                TESTSUITE.NUM_FAILED, TESTSUITE.NUM_SKIPPED, TESTSUITE.NUM_SUCCESS, TESTSUITE.NUM_TOTAL)
-                .values(nextId, projectId, testSuite.getName(), testSuite.getStatus(), testSuite.getStart(),
-                        testSuite.getCommitId(), testSuite.getBranchName(),
-                        testSuite.getNumberOfFailedTests(), testSuite.getNumberOfSkippedTests(), testSuite.getNumberOfSuccessfulTests(),
-                        testSuite.getTotalNumberOfTests()).execute();
+        TestsuiteRecord testsuiteRecord =
+                new TestsuiteRecord(nextId, projectId, testSuite.getName(), testSuite.getCommitId(), testSuite.getBranchName(),
+                        testSuite.getStart(), testSuite.getStatus(),
+                        testSuite.getTotalNumberOfTests(), testSuite.getNumberOfSuccessfulTests(), testSuite.getNumberOfFailedTests(),
+                        testSuite.getNumberOfSkippedTests());
+        db.insertInto(TESTSUITE).set(testsuiteRecord).execute();
 
         testSuite.getSortedTestExecutions(false).forEach(test -> insertTest(test, nextId));
     }
@@ -94,10 +110,10 @@ public class JooqPersistence implements Persistence {
     private void insertTest(TestExecution test, long suiteId) {
         long nextId = db.nextval(S_ID);
         ExecutionInfo info = test.getExecutionInfo();
-        db.insertInto(TESTRUN, TESTRUN.ID, TESTRUN.FK_TESTSUITE_ID, TESTRUN.TEST_NAME, TESTRUN.RESULT, TESTRUN.DURATION,
-                TESTRUN.OUTPUT, TESTRUN.ERRORTYPE, TESTRUN.ERRORMESSAGE, TESTRUN.STACKTRACE)
-                .values(nextId, suiteId, test.getTest().getFullName(), test.getResult(), test.getExecutionTime(),
-                        info.getStandardOut(), info.getErrorType(), info.getErrorMessage(), info.getStackTrace()).execute();
+        TestrunRecord testrunRecord =
+                new TestrunRecord(nextId, suiteId, test.getTest().getFullName(), test.getResult(), test.getExecutionTime(),
+                        info.getStandardOut(), info.getErrorType(), info.getErrorMessage(), info.getStackTrace());
+        db.insertInto(TESTRUN).set(testrunRecord).execute();
     }
 
     private Long getProjectIdByName(String name) {
