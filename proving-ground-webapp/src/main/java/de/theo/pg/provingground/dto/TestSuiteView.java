@@ -4,6 +4,7 @@
 
 package de.theo.pg.provingground.dto;
 
+import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 
 /**
@@ -25,6 +26,7 @@ public class TestSuiteView {
     private final int num_failed;
     private final int num_skipped;
 
+    @ConstructorProperties({"id", "projectid", "name", "startTime", "commitid", "branch", "status", "num_total", "num_success", "num_failed", "num_skipped"})
     public TestSuiteView(long id, long projectId, String name, LocalDateTime startTime, String commitId, String branch, Status status, int num_total, int num_success, int num_failed, int num_skipped) {
         this.id = id;
         this.projectId = projectId;
