@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 public class TestSuite implements Comparable<TestSuite> {
 
+    private static final String DEFAULT_BRANCH_NAME = "<NONE>";
+
     private final LocalDateTime start;
     private final String name;
     private final String commitId;
@@ -26,7 +28,12 @@ public class TestSuite implements Comparable<TestSuite> {
         this.start = start;
         this.name = name;
         this.commitId = commitId;
-        this.branchName = branchName;
+
+        if (branchName == null || branchName.isEmpty()) {
+            this.branchName = DEFAULT_BRANCH_NAME;
+        } else {
+            this.branchName = branchName;
+        }
         this.status = Status.OK;
 
         testExecutions = new HashSet<>();
