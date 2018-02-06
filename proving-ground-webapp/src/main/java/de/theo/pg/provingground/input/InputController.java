@@ -28,19 +28,23 @@ public class InputController implements InputApi {
 
     @Override
     @PostMapping
-    public void addNewTestRun(@RequestBody TestSuiteInput testSuiteInput) {
-        Project project = new Project(testSuiteInput.getProjectName());
-        TestSuite testSuite = new TestSuite(testSuiteInput.getStartTime(), testSuiteInput.getTestSuiteName(), testSuiteInput.getCommitIdentifier(), testSuiteInput.getBranchName());
-        List<TestExecution> testExecutions = testSuiteInput.getTestRuns().stream().map(this::mapTestRun).collect(Collectors.toList());
+    public void addNewTestRun(@RequestBody BuildInput buildInput) {
+        Project project = new Project(buildInput.getProjectName());
 
-        testSuite.addExecutions(testExecutions);
-        project.addTestRun(testSuite);
-        
-        persistence.persist(project);
+
+        String branchName = buildInput.getBranchName();
+        Branch branch = project.getOrAddBranch(branchName);
+        Build build = new Build(buildInput.getStartTime(), buildInput.getTestSuiteName(), buildInput.getCommitIdentifier());
+        List<TestRun> testExecutions = buildInput.getTestRuns().stream().map(this::mapTestRun).collect(Collectors.toList());
+        build.addTestRuns(testExecutions);
+
+        branch.addBuild(build);
+
+        persistence.persist(build);
     }
 
 
-    private TestExecution mapTestRun(TestRunInput input) {
+    private TestRun mapTestRun(TestRunInput input) {
         Test test = new Test(input.getName());
         ExecutionInfo executionInfo;
         if (input.getResult() == TestResultInput.FAILED) {
@@ -48,6 +52,6 @@ public class InputController implements InputApi {
         } else {
             executionInfo = new SuccessExecutionInfo(input.getOutput());
         }
-        return new TestExecution(test, TestResult.fromInput(input.getResult()), input.getDuration(), executionInfo);
+        return new TestRun(test, TestResult.fromInput(input.getResult()), input.getDuration(), executionInfo);
     }
 }

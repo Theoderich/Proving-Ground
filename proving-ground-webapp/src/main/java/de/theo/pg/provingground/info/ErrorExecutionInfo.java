@@ -33,4 +33,9 @@ public class ErrorExecutionInfo implements ExecutionInfo {
     public String getStandardOut() {
         return standardOut;
     }
+
+    @Override
+    public boolean hasErrorInfo() {
+        return true;
+    }
 }

@@ -1,39 +1,42 @@
 package de.theo.pg.provingground;
 
 
-import de.theo.pg.provingground.dto.Status;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Project {
 
     private final String name;
 
-    private final Set<Test> knownTests;
-    private final SortedSet<TestSuite> testSuites;
+    private final Map<String, Branch> branches;
 
 
     public Project(String name) {
         this.name = name;
-        this.knownTests = new HashSet<>();
-        this.testSuites = new TreeSet<>();
+        this.branches = new HashMap<>();
+
     }
 
-    public void addTestRun(TestSuite newTestSuite) {
-        this.testSuites.add(newTestSuite);
-        this.knownTests.addAll(newTestSuite.getAllExecutedTests());
+    public Branch addBranch(String branchName) {
+        if (branches.containsKey(branchName)) {
+            throw new IllegalArgumentException("Branch " + branchName + " already exists in Project " + this.name);
+        }
+        Branch newBranch = new Branch(branchName, this);
+        branches.put(branchName, newBranch);
+        return newBranch;
+    }
+
+    public Branch getOrAddBranch(String branchName) {
+        Branch result = branches.get(branchName);
+        if (result == null) {
+            result = addBranch(branchName);
+        }
+        return result;
     }
 
     public String getName() {
         return name;
-    }
-
-    public SortedSet<TestSuite> getTestSuites() {
-        return Collections.unmodifiableSortedSet(testSuites);
-    }
-
-    public Status getStatus() {
-        return testSuites.last().getStatus();
     }
 
     @Override

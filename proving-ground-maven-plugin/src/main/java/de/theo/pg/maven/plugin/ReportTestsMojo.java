@@ -3,8 +3,8 @@ package de.theo.pg.maven.plugin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.theo.pg.provingground.input.BuildInput;
 import de.theo.pg.provingground.input.TestRunInput;
-import de.theo.pg.provingground.input.TestSuiteInput;
 import de.theo.pg.provingground.parse.surefire.JunitResultParser;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,13 +39,13 @@ public class ReportTestsMojo extends AbstractMojo {
     @Parameter(property = "projectName", required = true, defaultValue = "${project.name}")
     private String projectName;
 
-    @Parameter(property = "runName", required = true)
-    private String runName;
+    @Parameter(property = "buildName", required = true)
+    private String buildName;
 
     @Parameter(property = "commitId", required = false)
     private String commitId;
 
-    @Parameter(property = "branchName", required = false)
+    @Parameter(property = "branchName", required = true)
     private String branchName;
 
     @Parameter(required = true)
@@ -85,9 +85,9 @@ public class ReportTestsMojo extends AbstractMojo {
                 }
 
             }
-            TestSuiteInput suiteInput = new TestSuiteInput();
+            BuildInput suiteInput = new BuildInput();
             suiteInput.setProjectName(getProjectName());
-            suiteInput.setTestSuiteName(getRunName());
+            suiteInput.setTestSuiteName(getBuildName());
             suiteInput.setStartTime(LocalDateTime.now());
             suiteInput.setCommitIdentifier(commitId);
             suiteInput.setBranchName(branchName);
@@ -192,12 +192,12 @@ public class ReportTestsMojo extends AbstractMojo {
         this.projectName = projectName;
     }
 
-    public String getRunName() {
-        return runName;
+    public String getBuildName() {
+        return buildName;
     }
 
-    public void setRunName(String runName) {
-        this.runName = runName;
+    public void setBuildName(String buildName) {
+        this.buildName = buildName;
     }
 
 

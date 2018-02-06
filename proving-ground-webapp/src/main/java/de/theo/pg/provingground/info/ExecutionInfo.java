@@ -11,4 +11,5 @@ public interface ExecutionInfo {
 
     String getStandardOut();
 
+    boolean hasErrorInfo();
 }

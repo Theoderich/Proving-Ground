@@ -13,12 +13,10 @@ public class ProjectView {
 
     private final long id;
     private final String name;
-    private final Status status;
 
-    public ProjectView(long id, String name, Status status) {
+    public ProjectView(long id, String name) {
         this.id = id;
         this.name = name;
-        this.status = status;
     }
 
     public long getId() {
@@ -27,9 +25,5 @@ public class ProjectView {
 
     public String getName() {
         return name;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 }

@@ -2,10 +2,7 @@ package de.theo.pg.provingground.mvc;
 
 import de.theo.pg.provingground.ElementNotFoundException;
 import de.theo.pg.provingground.TestResult;
-import de.theo.pg.provingground.dto.ProjectView;
-import de.theo.pg.provingground.dto.TestRunDetailsView;
-import de.theo.pg.provingground.dto.TestRunView;
-import de.theo.pg.provingground.dto.TestSuiteView;
+import de.theo.pg.provingground.dto.*;
 import de.theo.pg.provingground.persistence.Persistence;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,56 +30,71 @@ public class ProjectsController {
     }
 
     @GetMapping("{projectId}")
-    public ModelAndView projectView(@PathVariable("projectId") int projectId) throws ElementNotFoundException {
+    public ModelAndView branchesView(@PathVariable("projectId") long projectId) throws ElementNotFoundException {
         ProjectView project = persistence.findProject(projectId);
-        List<TestSuiteView> testSuites = persistence.findTestSuitesForProject(projectId);
-        ModelAndView modelAndView = new ModelAndView("project");
+        List<BranchView> branches = persistence.listBranchesForProject(projectId);
+        ModelAndView modelAndView = new ModelAndView("branches");
         modelAndView.addObject("project", project);
-        modelAndView.addObject("testSuites", testSuites);
+        modelAndView.addObject("branches", branches);
         return modelAndView;
-
     }
 
-    @GetMapping("{projectId}/{runId}")
-    public ModelAndView testSuiteView(@PathVariable("projectId") int projectId,
-                                      @PathVariable("runId") int runId,
-                                      @QueryParam("failedOnly") boolean failedOnly) throws ElementNotFoundException {
+    @GetMapping("{projectId}/{branchId}")
+    public ModelAndView buildsView(@PathVariable("projectId") long projectId,
+                                   @PathVariable("branchId") long branchId) throws ElementNotFoundException {
         ProjectView project = persistence.findProject(projectId);
-        TestSuiteView testSuite = persistence.findTestSuite(runId);
-        List<TestRunView> testRunsForSuite;
+        BranchView branch = persistence.findBranch(branchId);
+        List<BuildView> builds = persistence.findBuildsForBranch(branchId);
+        ModelAndView modelAndView = new ModelAndView("builds");
+        modelAndView.addObject("project", project);
+        modelAndView.addObject("branch", branch);
+        modelAndView.addObject("builds", builds);
+        return modelAndView;
+    }
+
+    @GetMapping("{projectId}/{branchId}/{buildId}")
+    public ModelAndView testRunsView(@PathVariable("projectId") long projectId,
+                                     @PathVariable("branchId") long branchId,
+                                     @PathVariable("buildId") long buildId,
+                                     @QueryParam("failedOnly") boolean failedOnly) throws ElementNotFoundException {
+        ProjectView project = persistence.findProject(projectId);
+        BranchView branch = persistence.findBranch(branchId);
+        BuildView build = persistence.findBuild(buildId);
+        List<TestRunView> testRunsForBuild;
         if (failedOnly) {
-            testRunsForSuite = persistence.findTestRunsForSuite(runId, TestResult.FAILED);
+            testRunsForBuild = persistence.findTestRunsForBuild(buildId, TestResult.FAILED);
         } else {
-            testRunsForSuite = persistence.findTestRunsForSuite(runId);
+            testRunsForBuild = persistence.findTestRunsForBuild(buildId);
         }
 
-        if (testSuite.getProjectId() != projectId) {
-            throw new ElementNotFoundException("testSuite is not part of this project");
+        if (build.getBranchId() != branchId) {
+            throw new ElementNotFoundException("build is not part of this branch");
         }
-        ModelAndView modelAndView = new ModelAndView("testSuite");
+        ModelAndView modelAndView = new ModelAndView("testRuns");
         modelAndView.addObject("project", project);
-        modelAndView.addObject("testSuite", testSuite);
-        modelAndView.addObject("testRuns", testRunsForSuite);
+        modelAndView.addObject("branch", branch);
+        modelAndView.addObject("build", build);
+        modelAndView.addObject("testRuns", testRunsForBuild);
         modelAndView.addObject("failedOnly", failedOnly);
         return modelAndView;
     }
 
-    @GetMapping("{projectId}/{runId}/{testId}")
-    public ModelAndView singleTestView(@PathVariable("projectId") int projectId,
-                                       @PathVariable("runId") int runId,
-                                       @PathVariable("testId") int testId) throws ElementNotFoundException {
+    @GetMapping("{projectId}/{branchId}/{buildId}/{testId}")
+    public ModelAndView singleTestRunView(@PathVariable("projectId") long projectId,
+                                          @PathVariable("branchId") long branchId,
+                                          @PathVariable("buildId") long buildId,
+                                          @PathVariable("testId") long testId) throws ElementNotFoundException {
         ProjectView project = persistence.findProject(projectId);
-        TestSuiteView testSuite = persistence.findTestSuite(runId);
+        BranchView branch = persistence.findBranch(branchId);
+        BuildView build = persistence.findBuild(buildId);
         TestRunDetailsView runDetailsView = persistence.findTestRun(testId);
-        if (testSuite.getProjectId() != projectId) {
-            throw new ElementNotFoundException("testSuite is not part of this project");
+        if (runDetailsView.getBuildId() != buildId) {
+            throw new ElementNotFoundException("testRun is not part of this build");
         }
-        if (runDetailsView.getTestSuiteId() != runId) {
-            throw new ElementNotFoundException("testRun is not part of this testSuite");
-        }
-        ModelAndView modelAndView = new ModelAndView("singleTest");
+        ModelAndView modelAndView = new ModelAndView("singleTestRun");
         modelAndView.addObject("project", project);
-        modelAndView.addObject("testSuite", testSuite);
+        modelAndView.addObject("branch", branch);
+        modelAndView.addObject("build", build);
         modelAndView.addObject("testRunDetails", runDetailsView);
 
         return modelAndView;

@@ -7,10 +7,14 @@
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
 
-    <title>Proving Grounds Projects</title>
+    <title>Proving Grounds</title>
 </head>
 <body>
 <div class="container">
+    <h1 th:text="${project.name} + ' - ' + ${branch.name}"></h1>
+
+    <h2>Test Details</h2>
+
     <h3 th:text="${testRunDetails.name}"></h3>
 
     <div th:if="${testRunDetails.result.success}">

@@ -11,10 +11,10 @@
 </head>
 <body>
 <div class="container">
-    <h1 th:text="|Test run ${testSuite.name} from ${testSuite.startTime}|"></h1>
+    <h1 th:text="|Build ${build.name}|"></h1>
 
-    <a th:href="${testSuite.id} + '?failedOnly=true'" th:unless="${failedOnly}">Show only Failed Tests</a>
-    <a th:href="${testSuite.id} + '?failedOnly=false'" th:if="${failedOnly}">Show all Tests</a>
+    <a th:href="${build.id} + '?failedOnly=true'" th:unless="${failedOnly}">Show only Failed Tests</a>
+    <a th:href="${build.id} + '?failedOnly=false'" th:if="${failedOnly}">Show all Tests</a>
 
 
     <table class="table table-bordered">

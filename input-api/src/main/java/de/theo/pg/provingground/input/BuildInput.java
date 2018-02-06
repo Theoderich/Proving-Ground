@@ -3,7 +3,7 @@ package de.theo.pg.provingground.input;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class TestSuiteInput {
+public class BuildInput {
 
     private String projectName;
     private String testSuiteName;

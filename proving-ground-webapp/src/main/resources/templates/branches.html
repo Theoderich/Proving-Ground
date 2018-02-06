@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+
+    <title>Proving Grounds</title>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${project.name}"></h1>
+    <h2>Branches</h2>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">branch</th>
+            <th scope="col">status</th>
+        </tr>
+        </thead>
+        <tr th:each="branch : ${branches}">
+            <td>
+                <a th:href="${branch.branchId} + '/'" th:text="${branch.name}"></a>
+            </td>
+            <td>
+                <span th:classappend="${branch.status.ok} ? 'badge-success' :  'badge-danger'"
+                      th:text="${branch.status.ok} ? 'success' : 'failed'" class="badge"></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+</body>
+</html>

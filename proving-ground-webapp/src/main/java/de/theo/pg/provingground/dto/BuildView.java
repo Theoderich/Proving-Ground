@@ -11,27 +11,25 @@ import java.time.LocalDateTime;
  *
  * @author Andreas Janning andreas.janning@qaware.de
  */
-public class TestSuiteView {
+public class BuildView {
 
     private final long id;
-    private final long projectId;
+    private final long branchId;
     private final String name;
     private final LocalDateTime startTime;
     private final String commitId;
-    private final String branch;
     private final Status status;
     private final int num_total;
     private final int num_success;
     private final int num_failed;
     private final int num_skipped;
 
-    public TestSuiteView(long id, long projectId, String name, LocalDateTime startTime, String commitId, String branch, Status status, int num_total, int num_success, int num_failed, int num_skipped) {
+    public BuildView(long id, long branchId, String name, LocalDateTime startTime, String commitId, Status status, int num_total, int num_success, int num_failed, int num_skipped) {
         this.id = id;
-        this.projectId = projectId;
+        this.branchId = branchId;
         this.name = name;
         this.startTime = startTime;
         this.commitId = commitId;
-        this.branch = branch;
         this.status = status;
         this.num_total = num_total;
         this.num_success = num_success;
@@ -43,8 +41,8 @@ public class TestSuiteView {
         return id;
     }
 
-    public long getProjectId() {
-        return projectId;
+    public long getBranchId() {
+        return branchId;
     }
 
     public String getName() {
@@ -59,9 +57,6 @@ public class TestSuiteView {
         return commitId;
     }
 
-    public String getBranch() {
-        return branch;
-    }
 
     public Status getStatus() {
         return status;

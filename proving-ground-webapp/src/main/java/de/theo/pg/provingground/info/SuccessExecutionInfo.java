@@ -27,4 +27,9 @@ public class SuccessExecutionInfo implements ExecutionInfo {
     public String getStandardOut() {
         return stdOut;
     }
+
+    @Override
+    public boolean hasErrorInfo() {
+        return false;
+    }
 }

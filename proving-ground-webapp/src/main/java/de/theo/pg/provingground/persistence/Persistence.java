@@ -1,12 +1,9 @@
 package de.theo.pg.provingground.persistence;
 
+import de.theo.pg.provingground.Build;
 import de.theo.pg.provingground.ElementNotFoundException;
-import de.theo.pg.provingground.Project;
 import de.theo.pg.provingground.TestResult;
-import de.theo.pg.provingground.dto.ProjectView;
-import de.theo.pg.provingground.dto.TestRunDetailsView;
-import de.theo.pg.provingground.dto.TestRunView;
-import de.theo.pg.provingground.dto.TestSuiteView;
+import de.theo.pg.provingground.dto.*;
 
 import java.util.List;
 
@@ -16,16 +13,19 @@ public interface Persistence {
 
     ProjectView findProject(long id) throws ElementNotFoundException;
 
-    List<TestSuiteView> findTestSuitesForProject(long projectId) throws ElementNotFoundException;
+    List<BranchView> listBranchesForProject(long projectId);
 
-    TestSuiteView findTestSuite(long testSuiteId) throws ElementNotFoundException;
+    BranchView findBranch(long branchId);
 
-    List<TestRunView> findTestRunsForSuite(long testSuiteId) throws ElementNotFoundException;
+    List<BuildView> findBuildsForBranch(long branchId) throws ElementNotFoundException;
 
-    List<TestRunView> findTestRunsForSuite(long testSuiteId, TestResult filter) throws ElementNotFoundException;
+    BuildView findBuild(long buildId) throws ElementNotFoundException;
+
+    List<TestRunView> findTestRunsForBuild(long buildId) throws ElementNotFoundException;
+
+    List<TestRunView> findTestRunsForBuild(long buildId, TestResult filter) throws ElementNotFoundException;
 
     TestRunDetailsView findTestRun(long testRunId) throws ElementNotFoundException;
 
-
-    void persist(Project project);
+    void persist(Build build);
 }

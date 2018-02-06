@@ -5,7 +5,7 @@ import de.theo.pg.provingground.info.ExecutionInfo;
 import java.time.Duration;
 import java.util.Objects;
 
-public class TestExecution {
+public class TestRun {
 
     private final Test test;
     private final TestResult result;
@@ -14,7 +14,7 @@ public class TestExecution {
     private final ExecutionInfo executionInfo;
 
 
-    public TestExecution(Test test, TestResult result, Duration executionTime, ExecutionInfo executionInfo) {
+    public TestRun(Test test, TestResult result, Duration executionTime, ExecutionInfo executionInfo) {
         this.test = test;
         this.result = result;
         this.executionTime = executionTime;
@@ -33,6 +33,10 @@ public class TestExecution {
         return executionTime;
     }
 
+    public boolean hasErrorInfo() {
+        return executionInfo.hasErrorInfo();
+    }
+
     public ExecutionInfo getExecutionInfo() {
         return executionInfo;
     }
@@ -41,7 +45,7 @@ public class TestExecution {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TestExecution that = (TestExecution) o;
+        TestRun that = (TestRun) o;
         return Objects.equals(test, that.test) &&
                 result == that.result &&
                 Objects.equals(executionTime, that.executionTime) &&
@@ -56,7 +60,7 @@ public class TestExecution {
 
     @Override
     public String toString() {
-        return "TestExecution{" +
+        return "TestRun{" +
                 "test=" + test.getFullName() +
                 ", result=" + result +
                 ", executionTime=" + executionTime +

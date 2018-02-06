@@ -16,7 +16,7 @@ import java.time.Duration;
 public class TestRunDetailsView {
 
     private final long id;
-    private final long testSuiteId;
+    private final long buildId;
     private final String name;
     private final TestResult result;
     private final Duration duration;
@@ -25,9 +25,9 @@ public class TestRunDetailsView {
     private final String errorMessage;
     private final String stacktrace;
 
-    public TestRunDetailsView(long id, long testSuiteId, String name, TestResult result, Duration duration, String output, String errorType, String errorMessage, String stacktrace) {
+    public TestRunDetailsView(long id, long buildId, String name, TestResult result, Duration duration, String output, String errorType, String errorMessage, String stacktrace) {
         this.id = id;
-        this.testSuiteId = testSuiteId;
+        this.buildId = buildId;
         this.name = name;
         this.result = result;
         this.duration = duration;
@@ -41,8 +41,8 @@ public class TestRunDetailsView {
         return id;
     }
 
-    public long getTestSuiteId() {
-        return testSuiteId;
+    public long getBuildId() {
+        return buildId;
     }
 
     public String getName() {

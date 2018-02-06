@@ -7,34 +7,32 @@
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 
-    <title>Proving Grounds Projects</title>
+    <title>Proving Grounds</title>
 </head>
 <body>
 <div class="container">
-    <h1 th:text="${project.name}"></h1>
-    <h2>Test Runs</h2>
+    <h1 th:text="${project.name} + ' - ' + ${branch.name}"></h1>
+    <h2>Builds</h2>
 
     <table class="table table-bordered">
         <thead>
         <tr>
             <th scope="col">run</th>
             <th scope="col">commit</th>
-            <th scope="col">branch</th>
             <th scope="col">timestamp</th>
             <th scope="col">result</th>
         </tr>
         </thead>
-        <tr th:each="suite : ${testSuites}">
+        <tr th:each="build : ${builds}">
             <td>
-                <a th:href="${suite.id}" th:text="${suite.name}"></a>
+                <a th:href="${build.id}" th:text="${build.name}"></a>
             </td>
-            <td th:text="${suite.commitId}"></td>
-            <td th:text="${suite.branch}"></td>
-            <td th:text="${suite.startTime}">
+            <td th:text="${build.commitId}"></td>
+            <td th:text="${build.startTime}">
             </td>
             <td>
-                <span th:classappend="${suite.status.ok} ? 'badge-success' :  'badge-danger'"
-                      th:text="${suite.status.ok} ? 'success' : 'failed'" class="badge"></span>
+                <span th:classappend="${build.status.ok} ? 'badge-success' :  'badge-danger'"
+                      th:text="${build.status.ok} ? 'success' : 'failed'" class="badge"></span>
             </td>
         </tr>
     </table>

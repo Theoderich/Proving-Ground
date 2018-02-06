@@ -18,6 +18,6 @@ public class ProjectViewRecordMapper implements RecordMapper<ProjectRecord, Proj
 
     @Override
     public ProjectView map(ProjectRecord record) {
-        return new ProjectView(record.getId(), record.getName(), record.getStatus());
+        return new ProjectView(record.getId(), record.getName());
     }
 }
