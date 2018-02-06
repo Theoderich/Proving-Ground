@@ -5,6 +5,8 @@
 package de.theo.pg.provingground.dto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 /**
  * TODO describe type.
@@ -23,6 +25,7 @@ public class BuildView implements NavigationPart {
     private final int num_success;
     private final int num_failed;
     private final int num_skipped;
+    protected static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT);
 
     public BuildView(long id, long branchId, String name, LocalDateTime startTime, String commitId, Status status, int num_total, int num_success, int num_failed, int num_skipped) {
         this.id = id;
@@ -51,6 +54,10 @@ public class BuildView implements NavigationPart {
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public String getStartTimeFormatted() {
+        return startTime.format(DATE_TIME_FORMATTER);
     }
 
     public String getCommitId() {

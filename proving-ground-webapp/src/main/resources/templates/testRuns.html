@@ -10,7 +10,7 @@
     <title>Proving Grounds Projects</title>
 </head>
 <body>
-<div class="container">
+<div class="container-fluid">
     <h1>Proving Grounds</h1>
     <h2>Tests</h2>
 
@@ -35,7 +35,7 @@
             <td><a th:text="${run.name}"
                    th:href="@{|${#httpServletRequest.requestURI}/${run.id}|}"></a>
             </td>
-            <td th:text="${run.duration.toMillis()} + 'ms'"></td>
+            <td th:text="${run.formattedDuration}"></td>
             <td> <span th:classappend="${run.result.success} ? 'badge-success' :  'badge-danger'"
                        th:text="${run.result.success} ? 'success' : 'failed'" class="badge"></span></td>
             <td th:if="${run.hasSuccessfulBuild()}">

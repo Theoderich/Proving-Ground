@@ -65,4 +65,16 @@ public class TestRunView {
     public Duration getDuration() {
         return duration;
     }
+
+    public String getFormattedDuration() {
+        if (duration.toMinutes() > 0) {
+            long secondsLeft = duration.getSeconds() % 60;
+            return duration.toMinutes() + "min " + secondsLeft + "s";
+        }
+        if (duration.getSeconds() > 0) {
+            long milliesLeft = duration.toMillis() % 1000;
+            return duration.getSeconds() + "s " + milliesLeft + "ms";
+        }
+        return duration.toMillis() + "ms";
+    }
 }

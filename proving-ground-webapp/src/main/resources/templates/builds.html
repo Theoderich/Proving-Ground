@@ -10,7 +10,7 @@
     <title>Proving Grounds</title>
 </head>
 <body>
-<div class="container">
+<div class="container-fluid">
     <h1>Proving Grounds</h1>
     <h2>Builds</h2>
     <div th:insert="~{navigation :: breadcrumb}"></div>
@@ -30,7 +30,7 @@
                 <a th:href="${build.id}" th:text="${build.name}"></a>
             </td>
             <td th:text="${build.commitId}"></td>
-            <td th:text="${build.startTime}">
+            <td th:text="${build.startTimeFormatted}">
             </td>
             <td>
                 <span th:classappend="${build.status.ok} ? 'badge-success' :  'badge-danger'"
