@@ -21,9 +21,9 @@ public interface Persistence {
 
     BuildView findBuild(long buildId) throws ElementNotFoundException;
 
-    List<TestRunView> findTestRunsForBuild(long buildId) throws ElementNotFoundException;
+    List<TestRunView> listTestRunsForBuild(long buildId) throws ElementNotFoundException;
 
-    List<TestRunView> findTestRunsForBuild(long buildId, TestResult filter) throws ElementNotFoundException;
+    List<TestRunView> listTestRunsForBuild(long buildId, TestResult filter) throws ElementNotFoundException;
 
     TestRunDetailsView findTestRun(long testRunId) throws ElementNotFoundException;
 

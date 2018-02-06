@@ -29,6 +29,8 @@ public class InputController implements InputApi {
     @Override
     @PostMapping
     public void addNewTestRun(@RequestBody BuildInput buildInput) {
+
+
         Project project = new Project(buildInput.getProjectName());
 
 

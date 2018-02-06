@@ -23,6 +23,7 @@
             <th scope="col">Test</th>
             <th scope="col">time</th>
             <th scope="col">result</th>
+            <th scope="col">last success</th>
         </tr>
         </thead>
         <tbody>
@@ -33,6 +34,13 @@
             <td th:text="${run.duration.toMillis()} + 'ms'"></td>
             <td> <span th:classappend="${run.result.success} ? 'badge-success' :  'badge-danger'"
                        th:text="${run.result.success} ? 'success' : 'failed'" class="badge"></span></td>
+            <td th:if="${run.hasSuccessfulBuild()}">
+                <a th:text="${run.lastSuccessBuildName}"
+                   th:href="@{/projects/{projectId}/{branchId}/{buildId}(projectId=${project.id},branchId=${branch.branchId},buildId=${run.lastSuccessBuildId})}"></a>
+            </td>
+            <td th:unless="${run.hasSuccessfulBuild()}">
+                Never
+            </td>
         </tr>
         </tbody>
     </table>

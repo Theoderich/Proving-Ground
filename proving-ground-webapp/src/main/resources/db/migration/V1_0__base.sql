@@ -39,14 +39,21 @@ CREATE TABLE BUILD (
   num_skipped  INT          NOT NULL,
   CONSTRAINT pk_build PRIMARY KEY (ID),
   CONSTRAINT fk_build__branch__id FOREIGN KEY (fk_branch_id) REFERENCES BRANCH (id),
+  CONSTRAINT u_build__name UNIQUE (fk_branch_id, name)
+
 );
 
 CREATE TABLE TEST (
-  id           BIGINT       NOT NULL,
-  fk_branch_id BIGINT       NOT NULL,
-  name         VARCHAR(500) NOT NULL,
+  id                    BIGINT       NOT NULL,
+  fk_branch_id          BIGINT       NOT NULL,
+  fk_build_last_run     BIGINT       NOT NULL,
+  fk_build_last_success BIGINT,
+  name                  VARCHAR(500) NOT NULL,
 
   CONSTRAINT pk_test PRIMARY KEY (ID),
+  CONSTRAINT fk_test__branch__id FOREIGN KEY (fk_branch_id) REFERENCES BRANCH (id),
+  CONSTRAINT fk_test__build__last_run FOREIGN KEY (fk_build_last_run) REFERENCES BUILD (id),
+  CONSTRAINT fk_test__build__last_success FOREIGN KEY (fk_build_last_success) REFERENCES BUILD (id),
   CONSTRAINT u_test__name UNIQUE (fk_branch_id, name)
 );
 

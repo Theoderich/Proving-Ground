@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.ws.rs.QueryParam;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/projects/")
@@ -60,22 +62,28 @@ public class ProjectsController {
         ProjectView project = persistence.findProject(projectId);
         BranchView branch = persistence.findBranch(branchId);
         BuildView build = persistence.findBuild(buildId);
+        List<TestRunView> allTestRuns = persistence.listTestRunsForBuild(buildId);
+        Map<Long, TestRunView> testRunMap = allTestRuns.stream().collect(Collectors.toMap(TestRunView::getId, x -> x));
         List<TestRunView> testRunsForBuild;
         if (failedOnly) {
-            testRunsForBuild = persistence.findTestRunsForBuild(buildId, TestResult.FAILED);
+            testRunsForBuild = persistence.listTestRunsForBuild(buildId, TestResult.FAILED);
         } else {
-            testRunsForBuild = persistence.findTestRunsForBuild(buildId);
+            testRunsForBuild = persistence.listTestRunsForBuild(buildId);
         }
+
 
         if (build.getBranchId() != branchId) {
             throw new ElementNotFoundException("build is not part of this branch");
         }
+
+
         ModelAndView modelAndView = new ModelAndView("testRuns");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branch", branch);
         modelAndView.addObject("build", build);
         modelAndView.addObject("testRuns", testRunsForBuild);
         modelAndView.addObject("failedOnly", failedOnly);
+        modelAndView.addObject("testRunMap", testRunMap);
         return modelAndView;
     }
 
@@ -87,6 +95,7 @@ public class ProjectsController {
         ProjectView project = persistence.findProject(projectId);
         BranchView branch = persistence.findBranch(branchId);
         BuildView build = persistence.findBuild(buildId);
+
         TestRunDetailsView runDetailsView = persistence.findTestRun(testId);
         if (runDetailsView.getBuildId() != buildId) {
             throw new ElementNotFoundException("testRun is not part of this build");

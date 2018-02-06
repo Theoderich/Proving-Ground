@@ -5,9 +5,14 @@ import de.theo.pg.provingground.dto.*;
 import de.theo.pg.provingground.info.ExecutionInfo;
 import de.theo.pg.provingground.persistence.entity.tables.records.*;
 import org.jooq.DSLContext;
+import org.jooq.Record7;
+import org.jooq.SelectConditionStep;
+import org.jooq.UpdateSetMoreStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 
 import static de.theo.pg.provingground.persistence.entity.Sequences.S_ID;
@@ -72,24 +77,25 @@ public class JooqPersistence implements Persistence {
     }
 
     @Override
-    public List<TestRunView> findTestRunsForBuild(long buildId) {
-        return db.select(TEST_RUN.ID, TEST_RUN.FK_BUILD_ID, TEST.NAME, TEST_RUN.RESULT, TEST_RUN.DURATION)
-                .from(TEST_RUN)
-                .join(TEST)
-                .on(TEST_RUN.FK_TEST_ID.eq(TEST.ID))
-                .where(TEST_RUN.FK_BUILD_ID.eq(buildId))
-                .fetch(testRunViewRecordMapper);
+    public List<TestRunView> listTestRunsForBuild(long buildId) {
+        return listTestRunsForBuild(buildId, null);
     }
 
     @Override
-    public List<TestRunView> findTestRunsForBuild(long buildId, TestResult filter) throws ElementNotFoundException {
-        return db.select(TEST_RUN.ID, TEST_RUN.FK_BUILD_ID, TEST.NAME, TEST_RUN.RESULT, TEST_RUN.DURATION)
+    public List<TestRunView> listTestRunsForBuild(long buildId, TestResult filter) {
+        SelectConditionStep<Record7<Long, Long, String, Long, String, TestResult, Duration>> query =
+                db.select(TEST_RUN.ID, TEST_RUN.FK_BUILD_ID, TEST.NAME, TEST.FK_BUILD_LAST_SUCCESS, BUILD.NAME, TEST_RUN.RESULT, TEST_RUN.DURATION)
                 .from(TEST_RUN)
                 .join(TEST)
                 .on(TEST_RUN.FK_TEST_ID.eq(TEST.ID))
-                .where(TEST_RUN.FK_BUILD_ID.eq(buildId))
-                .and(TEST_RUN.RESULT.eq(filter))
-                .fetch(testRunViewRecordMapper);
+                        .leftJoin(BUILD)
+                        .on(TEST.FK_BUILD_LAST_SUCCESS.eq(BUILD.ID))
+                        .where(TEST_RUN.FK_BUILD_ID.eq(buildId));
+        if (filter != null) {
+            query.and(TEST_RUN.RESULT.eq(filter));
+        }
+
+        return query.fetch(testRunViewRecordMapper);
     }
 
     @Override
@@ -98,15 +104,16 @@ public class JooqPersistence implements Persistence {
                 .select(TEST.NAME)
                 .select(ERROR_INFO.fields())
                 .from(TEST_RUN)
-                .join(ERROR_INFO)
-                .on(ERROR_INFO.FK_TEST_RUN_ID.eq(TEST_RUN.ID))
                 .join(TEST)
                 .on(TEST_RUN.FK_TEST_ID.eq(TEST.ID))
+                .leftJoin(ERROR_INFO)
+                .on(ERROR_INFO.FK_TEST_RUN_ID.eq(TEST_RUN.ID))
                 .where(TEST_RUN.ID.eq(testRunId)).fetchOne(testRunDetailsViewRecordMapper);
     }
 
 
     @Override
+    @Transactional
     public void persist(Build build) {
         Branch branch = build.getBranch();
         Project project = branch.getProject();
@@ -128,7 +135,7 @@ public class JooqPersistence implements Persistence {
     }
 
     private void insertTestRun(TestRun testRun, long buildId, long branchId) {
-        long testId = persistTest(testRun.getTest(), branchId);
+        long testId = persistTest(testRun.getTest(), branchId, buildId, testRun.getResult().isSuccess());
         long testRunId = db.nextval(S_ID);
         ExecutionInfo info = testRun.getExecutionInfo();
         TestRunRecord testrunRecord =
@@ -166,13 +173,26 @@ public class JooqPersistence implements Persistence {
         return branchId;
     }
 
-    private long persistTest(Test test, long branchId) {
+    private long persistTest(Test test, long branchId, long buildId, boolean success) {
         String testName = test.getFullName();
         Long testId = findTestIdByName(testName, branchId);
         if (testId == null) {
             testId = db.nextval(S_ID);
-            TestRecord testRecord = new TestRecord(testId, branchId, testName);
+            TestRecord testRecord = new TestRecord();
+            testRecord.setId(testId);
+            testRecord.setFkBranchId(branchId);
+            testRecord.setName(testName);
+            testRecord.setFkBuildLastRun(buildId);
+            if (success) {
+                testRecord.setFkBuildLastSuccess(buildId);
+            }
             db.insertInto(TEST).set(testRecord).execute();
+        } else {
+            UpdateSetMoreStep<TestRecord> query = db.update(TEST).set(TEST.FK_BUILD_LAST_RUN, buildId);
+            if (success) {
+                query.set(TEST.FK_BUILD_LAST_SUCCESS, buildId).where(TEST.ID.eq(testId));
+            }
+            query.execute();
         }
         return testId;
     }
