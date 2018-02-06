@@ -9,7 +9,7 @@ package de.theo.pg.provingground.dto;
  *
  * @author Andreas Janning andreas.janning@qaware.de
  */
-public class ProjectView {
+public class ProjectView implements NavigationPart {
 
     private final long id;
     private final String name;

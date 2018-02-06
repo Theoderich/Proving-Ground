@@ -11,8 +11,10 @@
 </head>
 <body>
 <div class="container">
-    <h1 th:text="${project.name} + ' - ' + ${branch.name}"></h1>
+    <h1>Proving Grounds</h1>
     <h2>Builds</h2>
+    <div th:insert="~{navigation :: breadcrumb}"></div>
+
 
     <table class="table table-bordered">
         <thead>

@@ -11,7 +11,11 @@
 </head>
 <body>
 <div class="container">
-    <h1 th:text="|Build ${build.name}|"></h1>
+    <h1>Proving Grounds</h1>
+    <h2>Tests</h2>
+
+    <div th:insert="~{navigation :: breadcrumb}"></div>
+
 
     <a th:href="${build.id} + '?failedOnly=true'" th:unless="${failedOnly}">Show only Failed Tests</a>
     <a th:href="${build.id} + '?failedOnly=false'" th:if="${failedOnly}">Show all Tests</a>
@@ -36,7 +40,7 @@
                        th:text="${run.result.success} ? 'success' : 'failed'" class="badge"></span></td>
             <td th:if="${run.hasSuccessfulBuild()}">
                 <a th:text="${run.lastSuccessBuildName}"
-                   th:href="@{/projects/{projectId}/{branchId}/{buildId}(projectId=${project.id},branchId=${branch.branchId},buildId=${run.lastSuccessBuildId})}"></a>
+                   th:href="@{/projects/{projectId}/{branchId}/{buildId}(projectId=${project.id},branchId=${branch.id},buildId=${run.lastSuccessBuildId})}"></a>
             </td>
             <td th:unless="${run.hasSuccessfulBuild()}">
                 Never

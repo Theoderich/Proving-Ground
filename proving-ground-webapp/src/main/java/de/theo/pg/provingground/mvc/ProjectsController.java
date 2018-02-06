@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.ws.rs.QueryParam;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +29,9 @@ public class ProjectsController {
     @GetMapping
     public ModelAndView listProjects() {
         List<ProjectView> allProjects = persistence.listAllProjects();
-        return new ModelAndView("projects", "allProjects", allProjects);
+        ModelAndView modelAndView = new ModelAndView("projects", "allProjects", allProjects);
+        addNavigation(modelAndView);
+        return modelAndView;
     }
 
     @GetMapping("{projectId}")
@@ -38,6 +41,7 @@ public class ProjectsController {
         ModelAndView modelAndView = new ModelAndView("branches");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branches", branches);
+        addNavigation(modelAndView, project);
         return modelAndView;
     }
 
@@ -51,6 +55,7 @@ public class ProjectsController {
         modelAndView.addObject("project", project);
         modelAndView.addObject("branch", branch);
         modelAndView.addObject("builds", builds);
+        addNavigation(modelAndView, project, branch);
         return modelAndView;
     }
 
@@ -84,6 +89,7 @@ public class ProjectsController {
         modelAndView.addObject("testRuns", testRunsForBuild);
         modelAndView.addObject("failedOnly", failedOnly);
         modelAndView.addObject("testRunMap", testRunMap);
+        addNavigation(modelAndView, project, branch, build);
         return modelAndView;
     }
 
@@ -105,7 +111,20 @@ public class ProjectsController {
         modelAndView.addObject("branch", branch);
         modelAndView.addObject("build", build);
         modelAndView.addObject("testRunDetails", runDetailsView);
-
+        addNavigation(modelAndView, project, branch, build, runDetailsView);
         return modelAndView;
+    }
+
+    private void addNavigation(ModelAndView modelAndView, NavigationPart... parts) {
+        List<NavigationItem> items = new ArrayList<>(parts.length);
+        NavigationItem firstItem = new NavigationItem("/projects/", "Home");
+        items.add(firstItem);
+        NavigationItem previousItem = firstItem;
+        for (NavigationPart part : parts) {
+            NavigationItem nextItem = new NavigationItem(part, previousItem);
+            items.add(nextItem);
+            previousItem = nextItem;
+        }
+        modelAndView.addObject("navigation", items);
     }
 }

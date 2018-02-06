@@ -1,0 +1,26 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<body>
+
+<div th:fragment="breadcrumb">
+    <nav aria-label="breadcrumb">
+        <!--/*@thymesVar id="navigation" type="java.util.List"*/-->
+
+        <ol class="breadcrumb">
+
+
+            <li class="breadcrumb-item" th:each="nav,iterStat : ${navigation}"
+                th:classappend="${iterStat.last} ? 'active' : ''">
+                <!--/*@thymesVar id="nav" type="de.theo.pg.provingground.mvc.NavigationItem"*/-->
+                <a th:unless="${iterStat.last}" th:href="@{{url}(url=${nav.link})}" th:text="${nav.name}"></a>
+                <th:block th:if="${iterStat.last}" th:text="${nav.name}"></th:block>
+            </li>
+
+        </ol>
+
+    </nav>
+</div>
+
+</body>
+</html>

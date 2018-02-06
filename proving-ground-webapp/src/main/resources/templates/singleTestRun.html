@@ -11,11 +11,11 @@
 </head>
 <body>
 <div class="container">
-    <h1 th:text="${project.name} + ' - ' + ${branch.name}"></h1>
-
+    <h1>Proving Grounds</h1>
     <h2>Test Details</h2>
 
-    <h3 th:text="${testRunDetails.name}"></h3>
+    <div th:insert="~{navigation :: breadcrumb}"></div>
+
 
     <div th:if="${testRunDetails.result.success}">
         <h3>Success!</h3>

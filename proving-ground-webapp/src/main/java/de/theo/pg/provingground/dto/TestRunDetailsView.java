@@ -13,7 +13,7 @@ import java.time.Duration;
  *
  * @author Andreas Janning andreas.janning@qaware.de
  */
-public class TestRunDetailsView {
+public class TestRunDetailsView implements NavigationPart {
 
     private final long id;
     private final long buildId;

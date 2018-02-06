@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  *
  * @author Andreas Janning andreas.janning@qaware.de
  */
-public class BuildView {
+public class BuildView implements NavigationPart {
 
     private final long id;
     private final long branchId;

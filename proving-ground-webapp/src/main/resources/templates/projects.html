@@ -10,8 +10,12 @@
     <title>Proving Grounds</title>
 </head>
 <body>
+
 <div class="container">
-    <h1>Projects</h1>
+    <h1>Proving Grounds</h1>
+    <h2>Projects</h2>
+
+    <div th:insert="~{navigation :: breadcrumb}"></div>
 
     <ul class="list-group">
       <a class="list-group-item list-group-item-action" th:each="project : ${allProjects}" th:text="${project.name}" th:href="${project.id} + '/'"></a>

@@ -9,24 +9,24 @@ package de.theo.pg.provingground.dto;
  *
  * @author Andreas Janning andreas.janning@qaware.de
  */
-public class BranchView {
+public class BranchView implements NavigationPart {
 
-    private final long branchId;
+    private final long id;
     private final long projectId;
     private final String name;
     private final Status status;
 
 
-    public BranchView(long branchId, long projectId, String name, Status status) {
-        this.branchId = branchId;
+    public BranchView(long id, long projectId, String name, Status status) {
+        this.id = id;
         this.name = name;
         this.projectId = projectId;
         this.status = status;
     }
 
 
-    public long getBranchId() {
-        return branchId;
+    public long getId() {
+        return id;
     }
 
     public long getProjectId() {

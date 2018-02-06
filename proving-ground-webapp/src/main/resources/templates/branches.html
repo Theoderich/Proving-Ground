@@ -11,8 +11,10 @@
 </head>
 <body>
 <div class="container">
-    <h1 th:text="${project.name}"></h1>
+    <h1>Proving Grounds</h1>
     <h2>Branches</h2>
+
+    <div th:insert="~{navigation :: breadcrumb}"></div>
 
     <table class="table table-bordered">
         <thead>
@@ -23,7 +25,7 @@
         </thead>
         <tr th:each="branch : ${branches}">
             <td>
-                <a th:href="${branch.branchId} + '/'" th:text="${branch.name}"></a>
+                <a th:href="${branch.id} + '/'" th:text="${branch.name}"></a>
             </td>
             <td>
                 <span th:classappend="${branch.status.ok} ? 'badge-success' :  'badge-danger'"
