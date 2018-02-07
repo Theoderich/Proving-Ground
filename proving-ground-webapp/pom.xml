@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>proving-ground-webapp</artifactId>
-    <groupId>proving-ground</groupId>
+    <groupId>de.qaware.pg</groupId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -26,12 +26,12 @@
     <dependencies>
 
         <dependency>
-            <groupId>de.theo.pg</groupId>
+            <groupId>de.qaware.pg</groupId>
             <artifactId>input-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.theo.pg</groupId>
+            <groupId>de.qaware.pg</groupId>
             <artifactId>surefire-scanner</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -174,23 +174,23 @@
                                     <customTypes>
                                         <customType>
                                             <name>Status</name>
-                                            <type>de.theo.pg.provingground.dto.Status</type>
-                                            <converter>de.theo.pg.provingground.persistence.StatusConverter</converter>
+                                            <type>de.qaware.pg.dto.Status</type>
+                                            <converter>de.qaware.pg.persistence.StatusConverter</converter>
                                         </customType>
                                         <customType>
                                             <name>TestResult</name>
-                                            <type>de.theo.pg.provingground.TestResult</type>
-                                            <converter>de.theo.pg.provingground.persistence.ResultConverter</converter>
+                                            <type>de.qaware.pg.TestResult</type>
+                                            <converter>de.qaware.pg.persistence.ResultConverter</converter>
                                         </customType>
                                         <customType>
                                             <name>Duration</name>
                                             <type>java.time.Duration</type>
-                                            <converter>de.theo.pg.provingground.persistence.DurationConverter</converter>
+                                            <converter>de.qaware.pg.persistence.DurationConverter</converter>
                                         </customType>
                                         <customType>
                                             <name>LocalDateTime</name>
                                             <type>java.time.LocalDateTime</type>
-                                            <converter>de.theo.pg.provingground.persistence.LocalDateTimeConverter</converter>
+                                            <converter>de.qaware.pg.persistence.LocalDateTimeConverter</converter>
                                         </customType>
                                     </customTypes>
                                     <forcedTypes>
@@ -222,7 +222,7 @@
                                     <pojos>false</pojos>
                                 </generate>
                                 <target>
-                                    <packageName>de.theo.pg.provingground.persistence.entity</packageName>
+                                    <packageName>de.qaware.pg.persistence.entity</packageName>
                                     <directory>target/generated-sources/jooq-h2</directory>
                                 </target>
                             </generator>

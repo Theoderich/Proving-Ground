@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>proving-ground</artifactId>
-        <groupId>de.theo.pg</groupId>
+        <groupId>de.qaware.pg</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -14,7 +14,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.theo.pg</groupId>
+            <groupId>de.qaware.pg</groupId>
             <artifactId>input-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -55,7 +55,7 @@
                 </executions>
                 <configuration>
                     <!-- The package of your generated sources -->
-                    <packageName>de.theo.pg.provingground.parse.surefire.xsd</packageName>
+                    <packageName>de.qaware.pg.parse.surefire.xsd</packageName>
                 </configuration>
             </plugin>
         </plugins>
