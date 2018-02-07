@@ -113,10 +113,6 @@
                 <artifactId>sql-maven-plugin</artifactId>
                 <version>1.5</version>
 
-                <configuration>
-                    <forkMode>always</forkMode>
-                </configuration>
-
                 <executions>
                     <execution>
                         <id>create-database-h2</id>
