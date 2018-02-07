@@ -94,6 +94,7 @@ public class ReportTestsMojo extends AbstractMojo {
             suiteInput.setTestRuns(allRuns);
 
 
+            getLog().info("Sending report to " + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
@@ -109,13 +110,14 @@ public class ReportTestsMojo extends AbstractMojo {
             int responseCode = conn.getResponseCode();
 
             if (responseCode != 200) {
-                getLog().error("Could not send report. Server responded with status code " + responseCode);
+                throw new MojoExecutionException("Could not send report. Server responded with status code " + responseCode);
             }
 
         } catch (MalformedURLException e) {
-            getLog().error("Invalid URL " + getReportUrl(), e);
+
+            throw new MojoExecutionException("Invalid URL " + getReportUrl(), e);
         } catch (IOException e) {
-            getLog().error("Could not send report", e);
+            throw new MojoExecutionException("Error sending report", e);
         }
     }
 

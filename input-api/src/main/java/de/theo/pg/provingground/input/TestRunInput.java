@@ -7,6 +7,7 @@ public class TestRunInput {
     private TestResultInput result;
     private Duration duration;
     private String output;
+    private String errorOutput;
     private String errorType;
     private String errorMessage;
     private String stacktrace;
@@ -42,6 +43,14 @@ public class TestRunInput {
 
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    public String getErrorOutput() {
+        return errorOutput;
+    }
+
+    public void setErrorOutput(String errorOutput) {
+        this.errorOutput = errorOutput;
     }
 
     public String getErrorType() {

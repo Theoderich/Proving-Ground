@@ -21,17 +21,19 @@ public class TestRunDetailsView implements NavigationPart {
     private final TestResult result;
     private final Duration duration;
     private final String output;
+    private final String stdErr;
     private final String errorType;
     private final String errorMessage;
     private final String stacktrace;
 
-    public TestRunDetailsView(long id, long buildId, String name, TestResult result, Duration duration, String output, String errorType, String errorMessage, String stacktrace) {
+    public TestRunDetailsView(long id, long buildId, String name, TestResult result, Duration duration, String output, String stdErr, String errorType, String errorMessage, String stacktrace) {
         this.id = id;
         this.buildId = buildId;
         this.name = name;
         this.result = result;
         this.duration = duration;
         this.output = output;
+        this.stdErr = stdErr;
         this.errorType = errorType;
         this.errorMessage = errorMessage;
         this.stacktrace = stacktrace;
@@ -55,6 +57,10 @@ public class TestRunDetailsView implements NavigationPart {
 
     public String getOutput() {
         return output;
+    }
+
+    public String getStdErr() {
+        return stdErr;
     }
 
     public String getErrorType() {

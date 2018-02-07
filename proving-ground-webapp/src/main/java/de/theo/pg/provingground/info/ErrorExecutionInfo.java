@@ -6,12 +6,14 @@ public class ErrorExecutionInfo implements ExecutionInfo {
     private final String exceptionType;
     private final String stackTrace;
     private final String standardOut;
+    private final String standardErr;
 
-    public ErrorExecutionInfo(String errorMessage, String exceptionType, String stackTrace, String standardOut) {
+    public ErrorExecutionInfo(String errorMessage, String exceptionType, String stackTrace, String standardOut, String standardErr) {
         this.errorMessage = errorMessage;
         this.exceptionType = exceptionType;
         this.stackTrace = stackTrace;
         this.standardOut = standardOut;
+        this.standardErr = standardErr;
     }
 
     @Override
@@ -32,6 +34,11 @@ public class ErrorExecutionInfo implements ExecutionInfo {
     @Override
     public String getStandardOut() {
         return standardOut;
+    }
+
+    @Override
+    public String getStandardErr() {
+        return standardErr;
     }
 
     @Override

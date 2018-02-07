@@ -59,6 +59,9 @@ public class JunitResultParser {
                 if (elementNotNull(testcase.getSystemOut())) {
                     testRunInput.setOutput(testcase.getSystemOut().getValue().toString());
                 }
+                if (elementNotNull(testcase.getSystemErr())) {
+                    testRunInput.setErrorOutput(testcase.getSystemErr().getValue().toString());
+                }
 
                 if (elementNotNull(testcase.getError())) {
                     Testsuite.Testcase.Error error = testcase.getError().getValue();

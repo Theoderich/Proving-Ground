@@ -50,9 +50,9 @@ public class InputController implements InputApi {
         Test test = new Test(input.getName());
         ExecutionInfo executionInfo;
         if (input.getResult() == TestResultInput.FAILED) {
-            executionInfo = new ErrorExecutionInfo(input.getErrorMessage(), input.getErrorType(), input.getStacktrace(), input.getOutput());
+            executionInfo = new ErrorExecutionInfo(input.getErrorMessage(), input.getErrorType(), input.getStacktrace(), input.getOutput(), input.getErrorOutput());
         } else {
-            executionInfo = new SuccessExecutionInfo(input.getOutput());
+            executionInfo = new SuccessExecutionInfo(input.getOutput(), input.getErrorOutput());
         }
         return new TestRun(test, TestResult.fromInput(input.getResult()), input.getDuration(), executionInfo);
     }

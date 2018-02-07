@@ -3,9 +3,12 @@ package de.theo.pg.provingground.info;
 public class SuccessExecutionInfo implements ExecutionInfo {
 
     private final String stdOut;
+    private final String stdErr;
 
-    public SuccessExecutionInfo(String stdOut) {
+
+    public SuccessExecutionInfo(String stdOut, String stdErr) {
         this.stdOut = stdOut;
+        this.stdErr = stdErr;
     }
 
     @Override
@@ -26,6 +29,11 @@ public class SuccessExecutionInfo implements ExecutionInfo {
     @Override
     public String getStandardOut() {
         return stdOut;
+    }
+
+    @Override
+    public String getStandardErr() {
+        return stdErr;
     }
 
     @Override

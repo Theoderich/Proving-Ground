@@ -140,7 +140,7 @@ public class JooqPersistence implements Persistence {
         ExecutionInfo info = testRun.getExecutionInfo();
         TestRunRecord testrunRecord =
                 new TestRunRecord(testRunId, buildId, testId, testRun.getResult(), testRun.getExecutionTime(),
-                        info.getStandardOut(), null);
+                        info.getStandardOut(), info.getStandardErr());
         db.insertInto(TEST_RUN).set(testrunRecord).execute();
         if (info.hasErrorInfo()) {
             long errorInfoId = db.nextval(S_ID);
