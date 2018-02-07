@@ -57,10 +57,10 @@ public class JunitResultParser {
                 Duration executionTime = Duration.ofMillis(timeInMillis.longValue());
                 testRunInput.setDuration(executionTime);
                 if (elementNotNull(testcase.getSystemOut())) {
-                    testRunInput.setOutput(testcase.getSystemOut().getValue().toString());
+                    testRunInput.setOutput(testcase.getSystemOut().getValue());
                 }
                 if (elementNotNull(testcase.getSystemErr())) {
-                    testRunInput.setErrorOutput(testcase.getSystemErr().getValue().toString());
+                    testRunInput.setErrorOutput(testcase.getSystemErr().getValue());
                 }
 
                 if (elementNotNull(testcase.getError())) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<testsuite failures="0" name="cucumber.runtime.formatter.JUnitFormatter" skipped="0" tests="1" time="52.705438">
+    <testcase classname="TestTest" name="someOutput" time="52.705438">
+        <system-out><![CDATA[The System Output]]></system-out>
+        <system-err><![CDATA[The Error Output]]></system-err>
+    </testcase>
+</testsuite>
