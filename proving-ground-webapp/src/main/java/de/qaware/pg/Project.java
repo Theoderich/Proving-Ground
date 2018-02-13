@@ -1,7 +1,12 @@
 package de.qaware.pg;
 
 
+import de.qaware.pg.dto.BranchView;
+import de.qaware.pg.dto.ProjectView;
+import de.qaware.pg.persistence.Persistence;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,8 +27,8 @@ public class Project {
         if (branches.containsKey(branchName)) {
             throw new IllegalArgumentException("Branch " + branchName + " already exists in Project " + this.name);
         }
-        Branch newBranch = new Branch(branchName, this);
-        branches.put(branchName, newBranch);
+        Branch newBranch = new Branch(branchName);
+        addBranch(newBranch);
         return newBranch;
     }
 
@@ -33,6 +38,20 @@ public class Project {
             result = addBranch(branchName);
         }
         return result;
+    }
+
+    private void addBranch(Branch newBranch) {
+        branches.put(newBranch.getName(), newBranch);
+    }
+
+
+    public static Project loadFromPersistence(Persistence persistence, long id) throws ElementNotFoundException {
+        ProjectView projectView = persistence.findProject(id);
+        Project project = new Project(projectView.getName());
+
+        List<BranchView> branchViews = persistence.listBranchesForProject(id);
+        branchViews.stream().map(branchView -> Branch.loadFromPersistence(persistence, branchView)).forEach(project::addBranch);
+        return project;
     }
 
     public String getName() {

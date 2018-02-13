@@ -1,12 +1,17 @@
 package de.qaware.pg;
 
+import de.qaware.pg.dto.BuildView;
 import de.qaware.pg.dto.Status;
+import de.qaware.pg.dto.TestRunView;
+import de.qaware.pg.persistence.Persistence;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Build implements Comparable<Build> {
+
+    private Long databaseId;
 
     private final LocalDateTime start;
     private final String name;
@@ -19,8 +24,11 @@ public class Build implements Comparable<Build> {
     private final Map<String, TestRun> testRunsByFullName;
 
     private Status status;
-    private Branch branch;
 
+    public Build(Long databaseId, LocalDateTime start, String name, String commitId) {
+        this(start, name, commitId);
+        this.databaseId = databaseId;
+    }
 
     public Build(LocalDateTime start, String name, String commitId) {
         this.start = start;
@@ -47,11 +55,7 @@ public class Build implements Comparable<Build> {
         } else {
             source = allTestRuns;
         }
-        return source.stream().sorted(Comparator.comparing(execution -> execution.getTest().getFullName())).collect(Collectors.toList());
-    }
-
-    public TestRun getTestRunForTest(String testName) {
-        return testRunsByFullName.get(testName);
+        return source.stream().sorted(Comparator.comparing(execution -> execution.getTestName())).collect(Collectors.toList());
     }
 
     public LocalDateTime getStart() {
@@ -72,7 +76,7 @@ public class Build implements Comparable<Build> {
         } else {
             successTestRuns.add(newTestRun);
         }
-        this.testRunsByFullName.put(newTestRun.getTest().getFullName(), newTestRun);
+        this.testRunsByFullName.put(newTestRun.getTestName(), newTestRun);
     }
 
     public void addTestRuns(Collection<TestRun> newTestRuns) {
@@ -80,7 +84,25 @@ public class Build implements Comparable<Build> {
     }
 
     public Set<Test> getAllTests() {
-        return allTestRuns.stream().map(TestRun::getTest).collect(Collectors.toSet());
+        return allTestRuns.stream().map(TestRun::getTestName).map(Test::new).collect(Collectors.toSet());
+    }
+
+    public boolean hasRunForTest(Test test) {
+        String testName = test.getName();
+        return this.testRunsByFullName.containsKey(testName);
+    }
+
+    public boolean hasSuccessfulRunForTest(Test test) {
+        String testName = test.getName();
+        TestRun testRun = this.testRunsByFullName.get(testName);
+        if (testRun == null) {
+            return false;
+        }
+        return testRun.getResult().isSuccess();
+    }
+
+    public TestRun getRunForTest(Test test) {
+        return testRunsByFullName.get(test.getName());
     }
 
     public Set<TestRun> getFailedTestRuns() {
@@ -91,11 +113,11 @@ public class Build implements Comparable<Build> {
         return name;
     }
 
-    public int getTotalNumberOfTests(){
+    public int getTotalNumberOfTests() {
         return allTestRuns.size();
     }
 
-    public int getNumberOfSuccessfulTests(){
+    public int getNumberOfSuccessfulTests() {
         return successTestRuns.size();
     }
 
@@ -112,12 +134,8 @@ public class Build implements Comparable<Build> {
     }
 
 
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
+    public Long getDatabaseId() {
+        return databaseId;
     }
 
     @Override
@@ -142,15 +160,21 @@ public class Build implements Comparable<Build> {
     @Override
     public String toString() {
         return "Build{" +
-                "start=" + start +
+                "databaseId=" + databaseId +
+                ", start=" + start +
                 ", name='" + name + '\'' +
                 ", commitId='" + commitId + '\'' +
-                ", allTestRuns=" + allTestRuns +
-                ", successTestRuns=" + successTestRuns +
-                ", failedTestRuns=" + failedTestRuns +
-                ", skippedTestRuns=" + skippedTestRuns +
-                ", testRunsByFullName=" + testRunsByFullName +
-                ", status=" + status +
                 '}';
+    }
+
+    public static Build loadFromPersistence(Persistence persistence, BuildView buildView) {
+        try {
+            Build build = new Build(buildView.getId(), buildView.getStartTime(), buildView.getName(), buildView.getCommitId());
+            List<TestRunView> testRunViews = persistence.listTestRunsForBuild(buildView.getId());
+            testRunViews.stream().map(testRunView -> TestRun.loadFromPersistence(persistence, testRunView)).forEach(build::addTestRun);
+            return build;
+        } catch (ElementNotFoundException e) {
+            throw new RuntimeException("Unable to list TestRuns for build " + buildView, e);
+        }
     }
 }

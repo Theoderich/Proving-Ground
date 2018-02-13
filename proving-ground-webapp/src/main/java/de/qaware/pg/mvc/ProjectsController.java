@@ -2,12 +2,15 @@ package de.qaware.pg.mvc;
 
 import de.qaware.pg.ElementNotFoundException;
 import de.qaware.pg.TestResult;
+import de.qaware.pg.business.ActionsManager;
 import de.qaware.pg.dto.*;
 import de.qaware.pg.persistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.ws.rs.QueryParam;
@@ -20,10 +23,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/projects/")
 public class ProjectsController {
 
-    private final Persistence persistence;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectsController.class);
 
-    public ProjectsController(Persistence persistence) {
+    private final Persistence persistence;
+    private final ActionsManager actionsManager;
+
+    public ProjectsController(Persistence persistence, ActionsManager actionsManager) {
         this.persistence = persistence;
+        this.actionsManager = actionsManager;
     }
 
     @GetMapping
@@ -50,13 +57,28 @@ public class ProjectsController {
                                    @PathVariable("branchId") long branchId) throws ElementNotFoundException {
         ProjectView project = persistence.findProject(projectId);
         BranchView branch = persistence.findBranch(branchId);
-        List<BuildView> builds = persistence.findBuildsForBranch(branchId);
+        List<BuildView> builds = persistence.listBuildsForBranch(branchId);
         ModelAndView modelAndView = new ModelAndView("builds");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branch", branch);
         modelAndView.addObject("builds", builds);
         addNavigation(modelAndView, project, branch);
         return modelAndView;
+    }
+
+
+    @DeleteMapping("{projectId}/{branchId}/{buildId}")
+    @ResponseBody
+    public ResponseEntity<Void> deleteBuild(@PathVariable("projectId") long projectId,
+                                            @PathVariable("branchId") long branchId,
+                                            @PathVariable("buildId") long buildId) {
+        try {
+            actionsManager.deleteBuild(branchId, buildId);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (ElementNotFoundException | RuntimeException e) {
+            LOGGER.error("Error deleting build with id " + buildId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("{projectId}/{branchId}/{buildId}")
@@ -126,5 +148,6 @@ public class ProjectsController {
             previousItem = nextItem;
         }
         modelAndView.addObject("navigation", items);
+        modelAndView.addObject("currentUrl", previousItem.getLink());
     }
 }

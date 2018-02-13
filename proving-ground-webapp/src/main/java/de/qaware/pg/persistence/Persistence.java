@@ -1,8 +1,6 @@
 package de.qaware.pg.persistence;
 
-import de.qaware.pg.Build;
-import de.qaware.pg.ElementNotFoundException;
-import de.qaware.pg.TestResult;
+import de.qaware.pg.*;
 import de.qaware.pg.dto.*;
 
 import java.util.List;
@@ -17,15 +15,23 @@ public interface Persistence {
 
     BranchView findBranch(long branchId);
 
-    List<BuildView> findBuildsForBranch(long branchId) throws ElementNotFoundException;
+    List<BuildView> listBuildsForBranch(long branchId) throws ElementNotFoundException;
 
     BuildView findBuild(long buildId) throws ElementNotFoundException;
+
+    void deleteBuild(long buildId);
+
+    void updateTest(long testId, long lastBuildId, Long lastSuccessBuildId);
+
+    void deleteTest(long testId);
 
     List<TestRunView> listTestRunsForBuild(long buildId) throws ElementNotFoundException;
 
     List<TestRunView> listTestRunsForBuild(long buildId, TestResult filter) throws ElementNotFoundException;
 
+    List<TestView> listTestsForBranch(long branchId);
+
     TestRunDetailsView findTestRun(long testRunId) throws ElementNotFoundException;
 
-    void persist(Build build);
+    void persist(Project project, Branch branch, Build build);
 }

@@ -42,7 +42,7 @@ public class InputController implements InputApi {
 
         branch.addBuild(build);
 
-        persistence.persist(build);
+        persistence.persist(project, branch, build);
     }
 
 
@@ -54,6 +54,6 @@ public class InputController implements InputApi {
         } else {
             executionInfo = new SuccessExecutionInfo(input.getOutput(), input.getErrorOutput());
         }
-        return new TestRun(test, TestResult.fromInput(input.getResult()), input.getDuration(), executionInfo);
+        return new TestRun(test.getName(), TestResult.fromInput(input.getResult()), input.getDuration(), executionInfo);
     }
 }

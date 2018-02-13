@@ -32,6 +32,7 @@ public class JooqPersistence implements Persistence {
     private final TestRunViewRecordMapper testRunViewRecordMapper;
     private final TestRunDetailsViewRecordMapper testRunDetailsViewRecordMapper;
     private final BranchViewRecordMapper branchViewRecordMapper;
+    private final TestViewRecordMapper testViewRecordMapper;
 
     private DSLContext db;
 
@@ -43,6 +44,7 @@ public class JooqPersistence implements Persistence {
         testRunViewRecordMapper = new TestRunViewRecordMapper();
         testRunDetailsViewRecordMapper = new TestRunDetailsViewRecordMapper();
         branchViewRecordMapper = new BranchViewRecordMapper();
+        testViewRecordMapper = new TestViewRecordMapper();
     }
 
     @Override
@@ -67,7 +69,7 @@ public class JooqPersistence implements Persistence {
 
 
     @Override
-    public List<BuildView> findBuildsForBranch(long branchId) {
+    public List<BuildView> listBuildsForBranch(long branchId) {
         return db.selectFrom(BUILD).where(BUILD.FK_BRANCH_ID.eq(branchId)).fetch().map(buildViewRecordMapper);
     }
 
@@ -75,6 +77,30 @@ public class JooqPersistence implements Persistence {
     public BuildView findBuild(long buildId) {
         return db.selectFrom(BUILD).where(BUILD.ID.eq(buildId)).fetchOne(buildViewRecordMapper);
     }
+
+    @Override
+    public void deleteBuild(long buildId) {
+        db.delete(BUILD).where(BUILD.ID.eq(buildId)).execute();
+    }
+
+    @Override
+    public void updateTest(long testId, long lastBuildId, Long lastSuccessBuildId) {
+        int rows = db.update(TEST).set(TEST.FK_BUILD_LAST_RUN, lastBuildId).set(TEST.FK_BUILD_LAST_SUCCESS, lastSuccessBuildId)
+                .where(TEST.ID.eq(testId)).execute();
+        if (rows != 1) {
+            throw new IllegalStateException("Unable to update test " + testId + " with lastBuildId " + lastBuildId + " and lastSuccessId " + lastSuccessBuildId);
+        }
+    }
+
+    @Override
+    public void deleteTest(long testId) {
+        db.delete(TEST_RUN).where(TEST_RUN.FK_TEST_ID.eq(testId)).execute();
+        int deletedRows = db.delete(TEST).where(TEST.ID.eq(testId)).execute();
+        if (deletedRows != 1) {
+            throw new IllegalStateException("Unable to delete test " + testId);
+        }
+    }
+
 
     @Override
     public List<TestRunView> listTestRunsForBuild(long buildId) {
@@ -99,6 +125,11 @@ public class JooqPersistence implements Persistence {
     }
 
     @Override
+    public List<TestView> listTestsForBranch(long branchId) {
+        return db.selectFrom(TEST).where(TEST.FK_BRANCH_ID.eq(branchId)).fetch(testViewRecordMapper);
+    }
+
+    @Override
     public TestRunDetailsView findTestRun(long testRunId) {
         return db.select(TEST_RUN.fields())
                 .select(TEST.NAME)
@@ -114,9 +145,7 @@ public class JooqPersistence implements Persistence {
 
     @Override
     @Transactional
-    public void persist(Build build) {
-        Branch branch = build.getBranch();
-        Project project = branch.getProject();
+    public void persist(Project project, Branch branch, Build build) {
         long projectId = persist(project);
         long branchId = persist(branch, projectId);
         insertBuild(build, branchId);
@@ -135,7 +164,7 @@ public class JooqPersistence implements Persistence {
     }
 
     private void insertTestRun(TestRun testRun, long buildId, long branchId) {
-        long testId = persistTest(testRun.getTest(), branchId, buildId, testRun.getResult().isSuccess());
+        long testId = persistTest(testRun.getTestName(), branchId, buildId, testRun.getResult().isSuccess());
         long testRunId = db.nextval(S_ID);
         ExecutionInfo info = testRun.getExecutionInfo();
         TestRunRecord testrunRecord =
@@ -173,8 +202,7 @@ public class JooqPersistence implements Persistence {
         return branchId;
     }
 
-    private long persistTest(Test test, long branchId, long buildId, boolean success) {
-        String testName = test.getFullName();
+    private long persistTest(String testName, long branchId, long buildId, boolean success) {
         Long testId = findTestIdByName(testName, branchId);
         if (testId == null) {
             testId = db.nextval(S_ID);
@@ -190,8 +218,9 @@ public class JooqPersistence implements Persistence {
         } else {
             UpdateSetMoreStep<TestRecord> query = db.update(TEST).set(TEST.FK_BUILD_LAST_RUN, buildId);
             if (success) {
-                query.set(TEST.FK_BUILD_LAST_SUCCESS, buildId).where(TEST.ID.eq(testId));
+                query.set(TEST.FK_BUILD_LAST_SUCCESS, buildId);
             }
+            query.where(TEST.ID.eq(testId));
             query.execute();
         }
         return testId;
