@@ -40,7 +40,7 @@
                 <span th:classappend="${build.status.ok} ? 'badge-success' :  'badge-danger'"
                       th:text="${build.status.ok} ? 'success' : 'failed'" class="badge"></span>
             </td>
-            <td>
+            <td th:if="${showActions}">
                 <button type="button" class="btn btn-danger btn-xs"
                         th:onclick="'deleteAjax(\'' + ${currentUrl} + ${build.linkId} + '\', function(){location.reload()}, function(){alert(\'Delete failed!\')})'">
                     Delete
@@ -48,6 +48,8 @@
             </td>
         </tr>
     </table>
+    <a type="button" class="btn" th:unless="${showActions}" th:href="${currentUrl} + '?showActions=true'">show admin
+        actions</a>
 </div>
 
 

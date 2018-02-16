@@ -52,7 +52,8 @@ public class ProjectsController {
 
     @GetMapping("{projectName}/{branchName}")
     public ModelAndView buildsView(@PathVariable("projectName") String projectName,
-                                   @PathVariable("branchName") String branchName) throws ElementNotFoundException {
+                                   @PathVariable("branchName") String branchName,
+                                   @QueryParam("showActions") boolean showActions) throws ElementNotFoundException {
         ProjectView project = persistence.findProjectByName(projectName);
         BranchView branch = persistence.findBranchByName(project.getId(), branchName);
         List<BuildView> builds = persistence.listBuildsForBranch(branch.getId());
@@ -60,6 +61,7 @@ public class ProjectsController {
         modelAndView.addObject("project", project);
         modelAndView.addObject("branch", branch);
         modelAndView.addObject("builds", builds);
+        modelAndView.addObject("showActions", showActions);
         addNavigation(modelAndView, project, branch);
         return modelAndView;
     }
