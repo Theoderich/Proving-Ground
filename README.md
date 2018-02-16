@@ -21,7 +21,7 @@ Add the following to your pom (or root pom for multi-module builds):
    <artifactId>proving-ground-maven-plugin</artifactId>
     <version>{proving-ground-version}</version>
     <configuration>
-        <reportUrl>to http://{server-url}:{port}/input/ </reportUrl>
+        <reportUrl>http://{server-url}:{port}/input/</reportUrl>
         <projectName>{project.name}</projectName> <!-- optional, project.name is default -->
         <reportsDirectories>
             <reportsDirectory>target/surefire-reports</reportsDirectory>
@@ -58,7 +58,7 @@ buildscript {
     }
     
     'proving-ground-report'{
-        reportUrl = 'http://localhost:8080/input'
+        reportUrl = 'http://{server-url}:{port}/input/'
         projectName = 'MyProjectName' //optional, project.name is default
     }
 }
