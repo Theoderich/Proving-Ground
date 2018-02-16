@@ -13,7 +13,7 @@
             <li class="breadcrumb-item" th:each="nav,iterStat : ${navigation}"
                 th:classappend="${iterStat.last} ? 'active' : ''">
                 <!--/*@thymesVar id="nav" type="de.qaware.pg.mvc.NavigationItem"*/-->
-                <a th:unless="${iterStat.last}" th:href="@{{url}(url=${nav.link})}" th:text="${nav.name}"></a>
+                <a th:unless="${iterStat.last}" th:href="${nav.link}" th:text="${nav.name}"></a>
                 <th:block th:if="${iterStat.last}" th:text="${nav.name}"></th:block>
             </li>
 
