@@ -86,16 +86,16 @@ public class ProjectsController {
     public ModelAndView testRunsView(@PathVariable("projectName") String projectName,
                                      @PathVariable("branchName") String branchName,
                                      @PathVariable("buildName") String buildName,
-                                     @QueryParam("failedOnly") boolean failedOnly) throws ElementNotFoundException {
+                                     @QueryParam("showAll") boolean showAll) throws ElementNotFoundException {
         ProjectView project = persistence.findProjectByName(projectName);
         BranchView branch = persistence.findBranchByName(project.getId(), branchName);
         BuildView build = persistence.findBuildByName(branch.getId(), buildName);
         List<TestRunView> testRunsForBuild;
         long buildId = build.getId();
-        if (failedOnly) {
-            testRunsForBuild = persistence.listTestRunsForBuild(buildId, TestResult.FAILED);
-        } else {
+        if (showAll) {
             testRunsForBuild = persistence.listTestRunsForBuild(buildId);
+        } else {
+            testRunsForBuild = persistence.listTestRunsForBuild(buildId, TestResult.FAILED);
         }
 
         ModelAndView modelAndView = new ModelAndView("testRuns");
@@ -103,7 +103,7 @@ public class ProjectsController {
         modelAndView.addObject("branch", branch);
         modelAndView.addObject("build", build);
         modelAndView.addObject("testRuns", testRunsForBuild);
-        modelAndView.addObject("failedOnly", failedOnly);
+        modelAndView.addObject("showAll", showAll);
         addNavigation(modelAndView, project, branch, build);
         return modelAndView;
     }

@@ -17,11 +17,15 @@
     <div th:insert="~{navigation :: breadcrumb}"></div>
 
 
-    <a th:href="${build.linkId} + '?failedOnly=true'" th:unless="${failedOnly}">Show only Failed Tests</a>
-    <a th:href="${build.linkId} + '?failedOnly=false'" th:if="${failedOnly}">Show all Tests</a>
+    <a th:href="${build.linkId} + '?showAll=false'" th:if="${showAll}">Show only Failed Tests</a>
+    <a th:href="${build.linkId} + '?showAll=true'" th:unless="${showAll}">Show all Tests</a>
 
 
-    <table class="table table-bordered">
+    <div th:if="${testRuns.isEmpty()}">
+        <th:block th:if="${showAll}">No recorded Tests for this run</th:block>
+        <th:block th:unless="${showAll}">No failed Tests for this run</th:block>
+    </div>
+    <table th:unless="${testRuns.isEmpty()}" class="table table-bordered">
         <thead>
         <tr>
             <th scope="col">Test</th>
@@ -31,6 +35,7 @@
         </tr>
         </thead>
         <tbody>
+
         <tr th:each="run : ${testRuns}">
             <td><a th:text="${run.name}"
                    th:href="@{|${#httpServletRequest.requestURI}/${run.id}|}"></a>
