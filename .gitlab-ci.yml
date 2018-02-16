@@ -1,9 +1,7 @@
 variables:
-  MAVEN_CONFIG: ".m2"
-  M2_REPO: ".m2/repository"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CI_OPTS: "--fail-at-end -b -s .mvn/settings.xml"
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   APP_IMAGE_ID: $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO/proving-ground-webapp:$CI_PIPELINE_ID
 
 
@@ -15,9 +13,10 @@ build:
   stage: build
   image: maven:3.5-jdk-8
   script:
+    - 'export
     - 'mvn $MAVEN_CLI_OPTS install'
     - 'cd proving-ground-gradle-plugin'
-    - './gradlew build'
+    - './gradlew build '
     - 'rm -r .m2/repository/de/qaware/pg'
   cache:
     paths:
