@@ -1,0 +1,37 @@
+variables:
+  MAVEN_CONFIG: ".m2"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
+  MAVEN_CI_OPTS: "--fail-at-end -b -s .mvn/settings.xml"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  APP_IMAGE_ID: $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO/proving-ground-webapp:$CI_PIPELINE_ID
+
+
+stages:
+  - build
+  - container
+
+build:
+  image: maven/3.5-jdk-8
+  stage: build
+  script:
+    - 'mvn $MAVEN_CLI_OPTS package'
+    - 'cd proving-ground-gradle.plugin'
+    - './gradlew build'
+    - 'rm -r .m2/repository/de/qaware/pg'
+    cache:
+      paths:
+        - .m2/repository
+  artifacts:
+     paths:
+      - '*/target/*.jar'
+      - '*/build/libs/*.jar'
+
+app-container:
+  image: docker:latest
+  stage: container
+  script:
+    - 'cp proving-ground-webapp/target/proving-ground-webapp-*.jar container/proving-ground-webapp.jar
+    - 'docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASS $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO'
+    - 'docker build --pull -t $APP_IMAGE_ID container'
+    - 'docker push $APP_IMAGE_ID'
+
