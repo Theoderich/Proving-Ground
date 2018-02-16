@@ -12,7 +12,7 @@ stages:
 
 build:
   stage: build
-  image: maven/3.5-jdk-8
+  image: maven:3.5-jdk-8
   script:
     - 'mvn $MAVEN_CLI_OPTS package'
     - 'cd proving-ground-gradle.plugin'
