@@ -19,6 +19,7 @@ build:
     - 'mvn $MAVEN_CLI_OPTS install'
     - 'cd proving-ground-gradle-plugin'
     - './gradlew build '
+    - 'cd ..'
     - 'rm -r .m2/repository/de/qaware/pg'
   cache:
     paths:
