@@ -3,17 +3,19 @@ variables:
   MAVEN_CI_OPTS: "--fail-at-end -b -s .mvn/settings.xml"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   APP_IMAGE_ID: $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO/proving-ground-webapp:$CI_PIPELINE_ID
+  SERVICE_NAME: proving-ground-webapp
 
 
 stages:
   - build
   - container
+  - cleanup
+  - deploy
 
 build:
   stage: build
   image: maven:3.5-jdk-8
   script:
-    - 'export
     - 'mvn $MAVEN_CLI_OPTS install'
     - 'cd proving-ground-gradle-plugin'
     - './gradlew build '
@@ -36,3 +38,37 @@ app-container:
     - 'docker build --pull -t $APP_IMAGE_ID container'
     - 'docker push $APP_IMAGE_ID'
 
+cleanup:
+  stage: cleanup
+  image: $DOCKER_REGISTRY_URL/qaware-internal-docker/oc:latest
+  dependencies: []
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
+    - oc project $OPENSHIFT_NAMESPACE
+    - oc delete all --all
+    - until oc get pods 2>&1 | grep -c "No resources found."; do sleep 1; done
+
+deploy:
+  stage: deploy
+  image: $DOCKER_REGISTRY_URL/qaware-internal-docker/oc:latest
+  dependencies: []
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
+    - oc project $OPENSHIFT_NAMESPACE
+    - >
+      oc new-app
+      --docker-image=${APP_IMAGE_ID}
+      --name=$SERVICE_NAME
+    - until oc get pods 2>&1 | grep $SERVICE_NAME | grep -v deploy | grep 1/1 | grep Running; do sleep 1; done
+    - >
+          until
+          oc create route edge $SERVICE_NAME
+          --hostname=proving-ground.cap.qaware.de
+          --service=$SERVICE_NAME
+          --insecure-policy=Allow
+          --port=8080
+          ; do sleep 1; done
