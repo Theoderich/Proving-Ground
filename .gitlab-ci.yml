@@ -1,5 +1,6 @@
 variables:
   MAVEN_CONFIG: ".m2"
+  M2_REPO: ".m2/repository"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CI_OPTS: "--fail-at-end -b -s .mvn/settings.xml"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
