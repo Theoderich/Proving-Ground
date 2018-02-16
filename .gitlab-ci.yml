@@ -11,26 +11,26 @@ stages:
   - container
 
 build:
-  image: maven/3.5-jdk-8
   stage: build
+  image: maven/3.5-jdk-8
   script:
     - 'mvn $MAVEN_CLI_OPTS package'
     - 'cd proving-ground-gradle.plugin'
     - './gradlew build'
     - 'rm -r .m2/repository/de/qaware/pg'
-    cache:
-      paths:
-        - .m2/repository
+  cache:
+    paths:
+      - .m2/repository
   artifacts:
      paths:
       - '*/target/*.jar'
       - '*/build/libs/*.jar'
 
 app-container:
-  image: docker:latest
   stage: container
+  image: docker:latest
   script:
-    - 'cp proving-ground-webapp/target/proving-ground-webapp-*.jar container/proving-ground-webapp.jar
+    - 'cp proving-ground-webapp/target/proving-ground-webapp-*.jar container/proving-ground-webapp.jar'
     - 'docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASS $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO'
     - 'docker build --pull -t $APP_IMAGE_ID container'
     - 'docker push $APP_IMAGE_ID'
