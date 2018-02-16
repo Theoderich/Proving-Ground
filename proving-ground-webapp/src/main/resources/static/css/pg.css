@@ -1,0 +1,6 @@
+.btn-xs, .btn-group-xs > .btn {
+    padding: 0.05rem 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
