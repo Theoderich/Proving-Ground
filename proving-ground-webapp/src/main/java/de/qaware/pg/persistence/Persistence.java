@@ -11,13 +11,20 @@ public interface Persistence {
 
     ProjectView findProject(long id) throws ElementNotFoundException;
 
+    ProjectView findProjectByName(String projectName) throws ElementNotFoundException;
+
     List<BranchView> listBranchesForProject(long projectId);
 
     BranchView findBranch(long branchId);
 
+    BranchView findBranchByName(long projectId, String branchName);
+
     List<BuildView> listBuildsForBranch(long branchId) throws ElementNotFoundException;
 
     BuildView findBuild(long buildId) throws ElementNotFoundException;
+
+    BuildView findBuildByName(long branchId, String buildName) throws ElementNotFoundException;
+
 
     void deleteBuild(long buildId);
 

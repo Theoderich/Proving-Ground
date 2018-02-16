@@ -4,6 +4,8 @@
 
 package de.qaware.pg.dto;
 
+import de.qaware.pg.EncodingUtil;
+
 /**
  * TODO describe type.
  *
@@ -29,10 +31,16 @@ public class BranchView implements NavigationPart {
         return id;
     }
 
+    @Override
+    public String getLinkId() {
+        return EncodingUtil.encode(name);
+    }
+
     public long getProjectId() {
         return projectId;
     }
 
+    @Override
     public String getName() {
         return name;
     }

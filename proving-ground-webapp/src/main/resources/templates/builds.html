@@ -29,7 +29,7 @@
         </thead>
         <tr th:each="build : ${builds}">
             <td>
-                <a th:href="${build.id}" th:text="${build.name}"></a>
+                <a th:href="${build.linkId}" th:text="${build.name}"></a>
             </td>
             <td th:text="${build.commitId}"></td>
             <td th:text="${build.startTimeFormatted}">
@@ -40,7 +40,7 @@
             </td>
             <td>
                 <button type="button" class="btn btn-danger btn-xs"
-                        th:onclick="'deleteAjax(\'' + ${currentUrl} + ${build.id} + '\', function(){location.reload()}, function(){alert(\'Delete failed!\')})'">
+                        th:onclick="'deleteAjax(\'' + ${currentUrl} + ${build.linkId} + '\', function(){location.reload()}, function(){alert(\'Delete failed!\')})'">
                     Delete
                 </button>
             </td>

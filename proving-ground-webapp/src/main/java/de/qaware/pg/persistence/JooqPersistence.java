@@ -58,6 +58,11 @@ public class JooqPersistence implements Persistence {
     }
 
     @Override
+    public ProjectView findProjectByName(String projectName) throws ElementNotFoundException {
+        return db.selectFrom(PROJECT).where(PROJECT.NAME.eq(projectName)).fetchOne(projectViewRecordMapper);
+    }
+
+    @Override
     public List<BranchView> listBranchesForProject(long projectId) {
         return db.selectFrom(BRANCH).where(BRANCH.FK_PROJECT_ID.eq(projectId)).fetch(branchViewRecordMapper);
     }
@@ -65,6 +70,11 @@ public class JooqPersistence implements Persistence {
     @Override
     public BranchView findBranch(long branchId) {
         return db.selectFrom(BRANCH).where(BRANCH.ID.eq(branchId)).fetchOne(branchViewRecordMapper);
+    }
+
+    @Override
+    public BranchView findBranchByName(long projectId, String branchName) {
+        return db.selectFrom(BRANCH).where(BRANCH.FK_PROJECT_ID.eq(projectId).and(BRANCH.NAME.eq(branchName))).fetchOne(branchViewRecordMapper);
     }
 
 
@@ -76,6 +86,11 @@ public class JooqPersistence implements Persistence {
     @Override
     public BuildView findBuild(long buildId) {
         return db.selectFrom(BUILD).where(BUILD.ID.eq(buildId)).fetchOne(buildViewRecordMapper);
+    }
+
+    @Override
+    public BuildView findBuildByName(long branchId, String buildName) throws ElementNotFoundException {
+        return db.selectFrom(BUILD).where(BUILD.FK_BRANCH_ID.eq(branchId).and(BUILD.NAME.eq(buildName))).fetchOne(buildViewRecordMapper);
     }
 
     @Override
@@ -111,9 +126,9 @@ public class JooqPersistence implements Persistence {
     public List<TestRunView> listTestRunsForBuild(long buildId, TestResult filter) {
         SelectConditionStep<Record7<Long, Long, String, Long, String, TestResult, Duration>> query =
                 db.select(TEST_RUN.ID, TEST_RUN.FK_BUILD_ID, TEST.NAME, TEST.FK_BUILD_LAST_SUCCESS, BUILD.NAME, TEST_RUN.RESULT, TEST_RUN.DURATION)
-                .from(TEST_RUN)
-                .join(TEST)
-                .on(TEST_RUN.FK_TEST_ID.eq(TEST.ID))
+                        .from(TEST_RUN)
+                        .join(TEST)
+                        .on(TEST_RUN.FK_TEST_ID.eq(TEST.ID))
                         .leftJoin(BUILD)
                         .on(TEST.FK_BUILD_LAST_SUCCESS.eq(BUILD.ID))
                         .where(TEST_RUN.FK_BUILD_ID.eq(buildId));

@@ -4,6 +4,8 @@
 
 package de.qaware.pg.dto;
 
+import de.qaware.pg.EncodingUtil;
+
 /**
  * TODO describe type.
  *
@@ -23,6 +25,12 @@ public class ProjectView implements NavigationPart {
         return id;
     }
 
+    @Override
+    public String getLinkId() {
+        return EncodingUtil.encode(name);
+    }
+
+    @Override
     public String getName() {
         return name;
     }

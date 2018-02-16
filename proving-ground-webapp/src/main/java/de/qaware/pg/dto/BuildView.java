@@ -4,6 +4,8 @@
 
 package de.qaware.pg.dto;
 
+import de.qaware.pg.EncodingUtil;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -44,10 +46,16 @@ public class BuildView implements NavigationPart {
         return id;
     }
 
+    @Override
+    public String getLinkId() {
+        return EncodingUtil.encode(name);
+    }
+
     public long getBranchId() {
         return branchId;
     }
 
+    @Override
     public String getName() {
         return name;
     }

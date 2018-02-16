@@ -17,8 +17,8 @@
     <div th:insert="~{navigation :: breadcrumb}"></div>
 
 
-    <a th:href="${build.id} + '?failedOnly=true'" th:unless="${failedOnly}">Show only Failed Tests</a>
-    <a th:href="${build.id} + '?failedOnly=false'" th:if="${failedOnly}">Show all Tests</a>
+    <a th:href="${build.linkId} + '?failedOnly=true'" th:unless="${failedOnly}">Show only Failed Tests</a>
+    <a th:href="${build.linkId} + '?failedOnly=false'" th:if="${failedOnly}">Show all Tests</a>
 
 
     <table class="table table-bordered">
@@ -40,7 +40,7 @@
                        th:text="${run.result.success} ? 'success' : 'failed'" class="badge"></span></td>
             <td th:if="${run.hasSuccessfulBuild()}">
                 <a th:text="${run.lastSuccessBuildName}"
-                   th:href="@{/projects/{projectId}/{branchId}/{buildId}(projectId=${project.id},branchId=${branch.id},buildId=${run.lastSuccessBuildId})}"></a>
+                   th:href="@{/projects/{projectId}/{branchId}/{buildId}(projectId=${project.linkId},branchId=${branch.linkId},buildId=${run.lastSuccessBuildId})}"></a>
             </td>
             <td th:unless="${run.hasSuccessfulBuild()}">
                 Never

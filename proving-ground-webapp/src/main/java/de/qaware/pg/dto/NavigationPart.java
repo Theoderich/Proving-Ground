@@ -11,7 +11,7 @@ package de.qaware.pg.dto;
  */
 public interface NavigationPart {
 
-    long getId();
+    String getLinkId();
 
     String getName();
 }

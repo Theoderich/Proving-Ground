@@ -16,8 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/projects/")
@@ -41,10 +39,10 @@ public class ProjectsController {
         return modelAndView;
     }
 
-    @GetMapping("{projectId}")
-    public ModelAndView branchesView(@PathVariable("projectId") long projectId) throws ElementNotFoundException {
-        ProjectView project = persistence.findProject(projectId);
-        List<BranchView> branches = persistence.listBranchesForProject(projectId);
+    @GetMapping("{projectName}")
+    public ModelAndView branchesView(@PathVariable("projectName") String projectName) throws ElementNotFoundException {
+        ProjectView project = persistence.findProjectByName(projectName);
+        List<BranchView> branches = persistence.listBranchesForProject(project.getId());
         ModelAndView modelAndView = new ModelAndView("branches");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branches", branches);
@@ -52,12 +50,12 @@ public class ProjectsController {
         return modelAndView;
     }
 
-    @GetMapping("{projectId}/{branchId}")
-    public ModelAndView buildsView(@PathVariable("projectId") long projectId,
-                                   @PathVariable("branchId") long branchId) throws ElementNotFoundException {
-        ProjectView project = persistence.findProject(projectId);
-        BranchView branch = persistence.findBranch(branchId);
-        List<BuildView> builds = persistence.listBuildsForBranch(branchId);
+    @GetMapping("{projectName}/{branchName}")
+    public ModelAndView buildsView(@PathVariable("projectName") String projectName,
+                                   @PathVariable("branchName") String branchName) throws ElementNotFoundException {
+        ProjectView project = persistence.findProjectByName(projectName);
+        BranchView branch = persistence.findBranchByName(project.getId(), branchName);
+        List<BuildView> builds = persistence.listBuildsForBranch(branch.getId());
         ModelAndView modelAndView = new ModelAndView("builds");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branch", branch);
@@ -67,42 +65,38 @@ public class ProjectsController {
     }
 
 
-    @DeleteMapping("{projectId}/{branchId}/{buildId}")
+    @DeleteMapping("{projectName}/{branchName}/{buildName}")
     @ResponseBody
-    public ResponseEntity<Void> deleteBuild(@PathVariable("projectId") long projectId,
-                                            @PathVariable("branchId") long branchId,
-                                            @PathVariable("buildId") long buildId) {
+    public ResponseEntity<Void> deleteBuild(@PathVariable("projectName") String projectName,
+                                            @PathVariable("branchName") String branchName,
+                                            @PathVariable("buildName") String buildName) {
         try {
-            actionsManager.deleteBuild(branchId, buildId);
+            ProjectView project = persistence.findProjectByName(projectName);
+            BranchView branch = persistence.findBranchByName(project.getId(), branchName);
+            BuildView build = persistence.findBuildByName(branch.getId(), buildName);
+            actionsManager.deleteBuild(branch.getId(), build.getId());
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (ElementNotFoundException | RuntimeException e) {
-            LOGGER.error("Error deleting build with id " + buildId, e);
+            LOGGER.error("Error deleting build with id " + buildName, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("{projectId}/{branchId}/{buildId}")
-    public ModelAndView testRunsView(@PathVariable("projectId") long projectId,
-                                     @PathVariable("branchId") long branchId,
-                                     @PathVariable("buildId") long buildId,
+    @GetMapping("{projectName}/{branchName}/{buildName}")
+    public ModelAndView testRunsView(@PathVariable("projectName") String projectName,
+                                     @PathVariable("branchName") String branchName,
+                                     @PathVariable("buildName") String buildName,
                                      @QueryParam("failedOnly") boolean failedOnly) throws ElementNotFoundException {
-        ProjectView project = persistence.findProject(projectId);
-        BranchView branch = persistence.findBranch(branchId);
-        BuildView build = persistence.findBuild(buildId);
-        List<TestRunView> allTestRuns = persistence.listTestRunsForBuild(buildId);
-        Map<Long, TestRunView> testRunMap = allTestRuns.stream().collect(Collectors.toMap(TestRunView::getId, x -> x));
+        ProjectView project = persistence.findProjectByName(projectName);
+        BranchView branch = persistence.findBranchByName(project.getId(), branchName);
+        BuildView build = persistence.findBuildByName(branch.getId(), buildName);
         List<TestRunView> testRunsForBuild;
+        long buildId = build.getId();
         if (failedOnly) {
             testRunsForBuild = persistence.listTestRunsForBuild(buildId, TestResult.FAILED);
         } else {
             testRunsForBuild = persistence.listTestRunsForBuild(buildId);
         }
-
-
-        if (build.getBranchId() != branchId) {
-            throw new ElementNotFoundException("build is not part of this branch");
-        }
-
 
         ModelAndView modelAndView = new ModelAndView("testRuns");
         modelAndView.addObject("project", project);
@@ -110,24 +104,20 @@ public class ProjectsController {
         modelAndView.addObject("build", build);
         modelAndView.addObject("testRuns", testRunsForBuild);
         modelAndView.addObject("failedOnly", failedOnly);
-        modelAndView.addObject("testRunMap", testRunMap);
         addNavigation(modelAndView, project, branch, build);
         return modelAndView;
     }
 
-    @GetMapping("{projectId}/{branchId}/{buildId}/{testId}")
-    public ModelAndView singleTestRunView(@PathVariable("projectId") long projectId,
-                                          @PathVariable("branchId") long branchId,
-                                          @PathVariable("buildId") long buildId,
+    @GetMapping("{projectName}/{branchName}/{buildName}/{testId}")
+    public ModelAndView singleTestRunView(@PathVariable("projectName") String projectName,
+                                          @PathVariable("branchName") String branchName,
+                                          @PathVariable("buildName") String buildName,
                                           @PathVariable("testId") long testId) throws ElementNotFoundException {
-        ProjectView project = persistence.findProject(projectId);
-        BranchView branch = persistence.findBranch(branchId);
-        BuildView build = persistence.findBuild(buildId);
+        ProjectView project = persistence.findProjectByName(projectName);
+        BranchView branch = persistence.findBranchByName(project.getId(), branchName);
+        BuildView build = persistence.findBuildByName(branch.getId(), buildName);
 
         TestRunDetailsView runDetailsView = persistence.findTestRun(testId);
-        if (runDetailsView.getBuildId() != buildId) {
-            throw new ElementNotFoundException("testRun is not part of this build");
-        }
         ModelAndView modelAndView = new ModelAndView("singleTestRun");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branch", branch);

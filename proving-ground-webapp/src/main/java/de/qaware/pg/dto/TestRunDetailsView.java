@@ -43,10 +43,16 @@ public class TestRunDetailsView implements NavigationPart {
         return id;
     }
 
+    @Override
+    public String getLinkId() {
+        return Long.toString(id);
+    }
+
     public long getBuildId() {
         return buildId;
     }
 
+    @Override
     public String getName() {
         return name;
     }

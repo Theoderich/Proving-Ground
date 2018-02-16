@@ -22,7 +22,7 @@ public class NavigationItem {
     }
 
     public NavigationItem(NavigationPart part) {
-        this(Long.toString(part.getId()), part.getName());
+        this(part.getLinkId(), part.getName());
     }
 
     public NavigationItem(NavigationPart part, NavigationItem previous) {
