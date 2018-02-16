@@ -15,12 +15,13 @@ build:
   image: maven:3.5-jdk-8
   script:
     - 'mvn $MAVEN_CLI_OPTS package'
-    - 'cd proving-ground-gradle.plugin'
+    - 'cd proving-ground-gradle-plugin'
     - './gradlew build'
     - 'rm -r .m2/repository/de/qaware/pg'
   cache:
     paths:
       - .m2/repository
+      - proving-ground-gradle-plugin/.gradle
   artifacts:
      paths:
       - '*/target/*.jar'
