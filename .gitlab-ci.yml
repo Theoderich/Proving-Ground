@@ -49,8 +49,8 @@ cleanup:
   script:
     - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
     - oc project $OPENSHIFT_NAMESPACE
-    - oc delete all --all
-    - until oc get pods 2>&1 | grep -c "No resources found."; do sleep 1; done
+    - oc delete all -l name=$SERVICE_NAME
+    - until oc get pods $SERVICE_NAME 2>&1 | grep -c "No resources found."; do sleep 1; done
 
 deploy:
   stage: deploy
@@ -65,6 +65,7 @@ deploy:
       oc new-app
       --docker-image=${APP_IMAGE_ID}
       --name=$SERVICE_NAME
+      -l name=$SERVICE_NAME
     - until oc get pods 2>&1 | grep $SERVICE_NAME | grep -v deploy | grep 1/1 | grep Running; do sleep 1; done
     - >
           until
