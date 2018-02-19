@@ -1,0 +1,32 @@
+ALTER TABLE ERROR_INFO
+  DROP CONSTRAINT fk_error_info__test_run__id;
+
+ALTER TABLE ERROR_INFO
+  ADD CONSTRAINT fk_error_info__test_run__id FOREIGN KEY (fk_test_run_id) REFERENCES TEST_RUN (id) ON DELETE CASCADE;
+
+ALTER TABLE TEST_RUN
+  DROP CONSTRAINT fk_test_run__build__id;
+
+ALTER TABLE TEST_RUN
+  ADD CONSTRAINT fk_test_run__build__id FOREIGN KEY (fk_build_id) REFERENCES BUILD (id) ON DELETE CASCADE;
+
+
+ALTER TABLE TEST
+  DROP CONSTRAINT fk_test__branch__id;
+
+ALTER TABLE TEST
+  ADD CONSTRAINT fk_test__branch__id FOREIGN KEY (fk_branch_id) REFERENCES BRANCH (id) ON DELETE CASCADE;
+
+
+ALTER TABLE BUILD
+  DROP CONSTRAINT fk_build__branch__id;
+
+ALTER TABLE BUILD
+  ADD CONSTRAINT fk_build__branch__id FOREIGN KEY (fk_branch_id) REFERENCES BRANCH (id) ON DELETE CASCADE;
+
+
+ALTER TABLE BRANCH
+  DROP CONSTRAINT fk_branch__project__id;
+
+ALTER TABLE BRANCH
+  ADD CONSTRAINT fk_branch__project__id FOREIGN KEY (fk_project_id) REFERENCES PROJECT (id) ON DELETE CASCADE;
