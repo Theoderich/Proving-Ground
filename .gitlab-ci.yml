@@ -1,6 +1,6 @@
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
-  MAVEN_CI_OPTS: "--fail-at-end -b -s .mvn/settings.xml"
+  MAVEN_CLI_OPTS: "--fail-at-end -B -s .mvn/settings.xml"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   APP_IMAGE_ID: $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO/proving-ground-webapp:$CI_PIPELINE_ID
   SERVICE_NAME: proving-ground-webapp
@@ -50,7 +50,7 @@ cleanup:
     - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
     - oc project $OPENSHIFT_NAMESPACE
     - oc delete all -l name=$SERVICE_NAME
-    - oc get pods $SERVICE_NAME 2>&1 | grep -c "not found"; do sleep 1; done
+    - until oc get pods $SERVICE_NAME 2>&1 | grep -c "not found"; do sleep 1; done
 
 deploy:
   stage: deploy
