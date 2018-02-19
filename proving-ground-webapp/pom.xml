@@ -172,7 +172,7 @@
                                     <excludes></excludes>
                                     <dateAsTimestamp>true</dateAsTimestamp>
                                     <inputSchema>PUBLIC</inputSchema>
-                                    <outputSchema>proving_ground</outputSchema>
+                                    <outputSchema>public</outputSchema>
                                     <customTypes>
                                         <customType>
                                             <name>Status</name>
