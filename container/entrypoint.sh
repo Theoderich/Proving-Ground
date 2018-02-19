@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-exec java -jar /application/proving-ground-webapp.jar
+exec java -jar /application/proving-ground-webapp.jar --spring.config.name=application-cap
