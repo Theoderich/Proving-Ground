@@ -50,7 +50,7 @@ cleanup:
     - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
     - oc project $OPENSHIFT_NAMESPACE
     - oc delete all -l name=$SERVICE_NAME
-    - until oc get pods $SERVICE_NAME 2>&1 | grep -c "No resources found."; do sleep 1; done
+    - oc get pods $SERVICE_NAME 2>&1
 
 deploy:
   stage: deploy
