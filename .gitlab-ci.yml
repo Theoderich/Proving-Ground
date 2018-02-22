@@ -21,7 +21,7 @@ build:
   variables:
     POSTGRES_USER: pg
     POSTGRES_PASSWORD: pg
-    POSTGRES_DB: poving_ground_jooq
+    POSTGRES_DB: proving_ground_jooq
   script:
     - 'mvn $MAVEN_CLI_OPTS install'
     - 'cd proving-ground-gradle-plugin'
