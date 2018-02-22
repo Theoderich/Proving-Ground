@@ -27,12 +27,12 @@
 
     <distributionManagement>
         <repository>
-            <id>dtag-agis-psap-maven-release</id>
-            <url>https://artifactory.qaware.de:443/artifactory/dtag-agis-psap-maven-release</url>
+            <id>qaware-maven-release</id>
+            <url>https://artifactory.qaware.de:443/artifactory/qaware-maven-release</url>
         </repository>
         <snapshotRepository>
-            <id>dtag-agis-psap-maven-snapshot</id>
-            <url>https://artifactory.qaware.de:443/artifactory/dtag-agis-psap-maven-snapshot</url>
+            <id>qaware-maven-snapshot</id>
+            <url>https://artifactory.qaware.de:443/artifactory/qaware-maven-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 

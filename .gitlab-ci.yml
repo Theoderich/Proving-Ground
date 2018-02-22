@@ -23,9 +23,9 @@ build:
     POSTGRES_PASSWORD: pg
     POSTGRES_DB: proving_ground_jooq
   script:
-    - 'mvn $MAVEN_CLI_OPTS install'
+    - 'mvn $MAVEN_CLI_OPTS deploy'
     - 'cd proving-ground-gradle-plugin'
-    - './gradlew build '
+    - './gradlew build publish '
     - 'cd ..'
     - 'rm -r .m2/repository/de/qaware/pg'
   cache:

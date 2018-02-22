@@ -3,11 +3,24 @@ version '0.0.1-SNAPSHOT'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
+
+def MAVEN_REPO_URL = 'https://artifactory.qaware.de:443/artifactory/qaware-maven-'
+MAVEN_REPO_URL += project.version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'
+println(MAVEN_REPO_URL)
 
 repositories {
     mavenLocal()
     mavenCentral()
+}
+
+publishing {
+    repositories {
+        maven {
+            MAVEN_REPO_URL
+        }
+    }
 }
 
 dependencies {
