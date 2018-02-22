@@ -16,10 +16,12 @@ repositories {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: 'https://artifactory.qaware.de:443/artifactory/qaware-maven-release'){
+            repository(url: 'https://artifactory.qaware.de:443/artifactory/qaware-maven-release') {
                 authentication(userName: mavenUser, password: mavenPassword)
             }
-            snapshotRepository(url: 'https://artifactory.qaware.de:443/artifactory/qaware-maven-snapshot')
+            snapshotRepository(url: 'https://artifactory.qaware.de:443/artifactory/qaware-maven-snapshot') {
+                authentication(userName: mavenUser, password: mavenPassword)
+            }
             pom.artifactId = 'proving-ground-gradle-plugin'
         }
     }
