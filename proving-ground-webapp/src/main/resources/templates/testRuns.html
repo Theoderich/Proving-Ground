@@ -20,6 +20,9 @@
     <a th:href="${build.linkId} + '?showAll=false'" th:if="${showAll}">Show only Failed Tests</a>
     <a th:href="${build.linkId} + '?showAll=true'" th:unless="${showAll}">Show all Tests</a>
 
+    <div>
+        <b th:text="|${build.num_total} tests run ${build.num_success} sucessful, ${build.num_failed} failed, ${build.num_skipped} skipped|"></b>
+    </div>
 
     <div th:if="${testRuns.isEmpty()}">
         <th:block th:if="${showAll}">No recorded Tests for this run</th:block>
