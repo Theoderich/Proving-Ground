@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class ProjectsController {
     @GetMapping("{projectName}/{branchName}")
     public ModelAndView buildsView(@PathVariable("projectName") String projectName,
                                    @PathVariable("branchName") String branchName,
-                                   @QueryParam("showActions") boolean showActions) throws ElementNotFoundException {
+                                   @RequestParam(value = "showActions", required = false, defaultValue = "false") boolean showActions) throws ElementNotFoundException {
         ProjectView project = persistence.findProjectByName(projectName);
         BranchView branch = persistence.findBranchByName(project.getId(), branchName);
         List<BuildView> builds = persistence.listBuildsForBranch(branch.getId());
@@ -88,7 +87,7 @@ public class ProjectsController {
     public ModelAndView testRunsView(@PathVariable("projectName") String projectName,
                                      @PathVariable("branchName") String branchName,
                                      @PathVariable("buildName") String buildName,
-                                     @QueryParam("showAll") boolean showAll) throws ElementNotFoundException {
+                                     @RequestParam(value = "showAll", required = false, defaultValue = "false") boolean showAll) throws ElementNotFoundException {
         ProjectView project = persistence.findProjectByName(projectName);
         BranchView branch = persistence.findBranchByName(project.getId(), branchName);
         BuildView build = persistence.findBuildByName(branch.getId(), buildName);
