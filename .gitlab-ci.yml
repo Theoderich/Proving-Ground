@@ -48,7 +48,7 @@ app-container:
 
 cleanup:
   stage: cleanup
-  image: $DOCKER_REGISTRY_URL/qaware-internal-docker/oc:latest
+  image: $DOCKER_REGISTRY_URL/qaware-docker/oc:latest
   dependencies: []
   variables:
     GIT_STRATEGY: none
@@ -60,7 +60,7 @@ cleanup:
 
 deploy:
   stage: deploy
-  image: $DOCKER_REGISTRY_URL/qaware-internal-docker/oc:latest
+  image: $DOCKER_REGISTRY_URL/qaware-docker/oc:latest
   dependencies: []
   variables:
     GIT_STRATEGY: none
