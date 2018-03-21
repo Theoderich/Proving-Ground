@@ -4,9 +4,9 @@
 
 package de.qaware.pg;
 
+import org.springframework.web.util.UriUtils;
+
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 /**
  * TODO describe type.
@@ -22,18 +22,15 @@ public final class EncodingUtil {
 
     public static String encode(String s) {
         try {
-            return URLEncoder.encode(s, ENCODING);
+            String encode = UriUtils.encode(s, ENCODING);
+            return encode.replace("%2F", "~2F");
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException("Cannot encode URL", e);
         }
     }
 
 
-    public static String decode(String s) {
-        try {
-            return URLDecoder.decode(s, ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Cannot decode URL", e);
-        }
+    public static String decodeForwardSlash(String s) {
+        return s.replace("~2F", "/");
     }
 }
