@@ -46,18 +46,6 @@ app-container:
     - 'docker build --pull -t $APP_IMAGE_ID container'
     - 'docker push $APP_IMAGE_ID'
 
-cleanup:
-  stage: cleanup
-  image: $DOCKER_REGISTRY_URL/qaware-docker/oc:latest
-  dependencies: []
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
-    - oc project $OPENSHIFT_NAMESPACE
-    - oc delete all -l app=$SERVICE_NAME
-    - while oc get pods $SERVICE_NAME 2>&1; do sleep 1; done
-
 deploy:
   stage: deploy
   image: $DOCKER_REGISTRY_URL/qaware-docker/oc:latest
@@ -65,18 +53,7 @@ deploy:
   variables:
     GIT_STRATEGY: none
   script:
-    - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
-    - oc project $OPENSHIFT_NAMESPACE
-    - >
-      oc new-app
-      --docker-image=${APP_IMAGE_ID}
-      --name=$SERVICE_NAME
-    - until oc get pods 2>&1 | grep $SERVICE_NAME | grep -v deploy | grep 1/1 | grep Running; do sleep 1; done
-    - >
-          until
-          oc create route edge $SERVICE_NAME
-          --hostname=proving-ground.cap.qaware.de
-          --service=$SERVICE_NAME
-          --insecure-policy=Allow
-          --port=8080
-          ; do sleep 1; done
+      - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
+      - oc project $OPENSHIFT_NAMESPACE
+      - oc apply -f deployment.yml
+      - oc rollout latest proving-ground-webapp
