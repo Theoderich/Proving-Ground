@@ -55,5 +55,5 @@ deploy:
   script:
       - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
       - oc project $OPENSHIFT_NAMESPACE
-      - oc apply -f deployment.yml
+      - oc apply -f deployment/deployment.yml
       - oc rollout latest proving-ground-webapp
