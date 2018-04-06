@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: proving-ground-webapp
-          image: artifactory.qaware.de/qaware-qabuild-docker/agis-next-wp:latest
+          image: artifactory.qaware.de/qaware-qabuild-docker/proving-ground-webapp:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
