@@ -2,7 +2,7 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--fail-at-end -B -s .m2/settings.xml"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  APP_IMAGE_ID: $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO/proving-ground-webapp:$CI_PIPELINE_ID
+  APP_IMAGE_ID: $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO/proving-ground-webapp
   SERVICE_NAME: proving-ground-webapp
   OPENSHIFT_NAMESPACE: proving-ground
 
