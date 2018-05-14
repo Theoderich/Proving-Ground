@@ -48,7 +48,7 @@
                        th:text="${run.result.success} ? 'success' : 'failed'" class="badge"></span></td>
             <td th:if="${run.hasSuccessfulBuild()}">
                 <a th:text="${run.lastSuccessBuildName}"
-                   th:href="@{/projects/{projectId}/{branchId}/{buildId}(projectId=${project.linkId},branchId=${branch.linkId},buildId=${run.lastSuccessBuildId})}"></a>
+                   th:href="@{/projects/{projectId}/{branchId}/{buildId}(projectId=${project.linkId},branchId=${branch.linkId},buildId=${run.lastSuccessBuildName})}"></a>
             </td>
             <td th:unless="${run.hasSuccessfulBuild()}">
                 Never
