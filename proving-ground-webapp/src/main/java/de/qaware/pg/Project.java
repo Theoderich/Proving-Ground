@@ -1,7 +1,7 @@
 package de.qaware.pg;
 
 
-import de.qaware.pg.dto.BranchView;
+import de.qaware.pg.dto.BranchWithNewestBuildView;
 import de.qaware.pg.dto.ProjectView;
 import de.qaware.pg.persistence.Persistence;
 
@@ -49,7 +49,7 @@ public class Project {
         ProjectView projectView = persistence.findProject(id);
         Project project = new Project(projectView.getName());
 
-        List<BranchView> branchViews = persistence.listBranchesForProject(id);
+        List<BranchWithNewestBuildView> branchViews = persistence.listBranchesForProject(id);
         branchViews.stream().map(branchView -> Branch.loadFromPersistence(persistence, branchView)).forEach(project::addBranch);
         return project;
     }

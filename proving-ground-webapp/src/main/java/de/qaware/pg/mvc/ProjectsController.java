@@ -42,7 +42,8 @@ public class ProjectsController {
     @GetMapping("{projectName}")
     public ModelAndView branchesView(@PathVariable("projectName") String projectName) throws ElementNotFoundException {
         ProjectView project = persistence.findProjectByName(projectName);
-        List<BranchView> branches = persistence.listBranchesForProject(project.getId());
+        List<BranchWithNewestBuildView> branches = persistence.listBranchesForProject(project.getId());
+        branches.sort(Comparator.comparing(b -> b.getNewestBuild().getStartTime()));
         ModelAndView modelAndView = new ModelAndView("branches");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branches", branches);

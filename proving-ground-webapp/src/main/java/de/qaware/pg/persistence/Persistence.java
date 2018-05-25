@@ -13,7 +13,7 @@ public interface Persistence {
 
     ProjectView findProjectByName(String projectName) throws ElementNotFoundException;
 
-    List<BranchView> listBranchesForProject(long projectId);
+    List<BranchWithNewestBuildView> listBranchesForProject(long projectId);
 
     BranchView findBranch(long branchId);
 

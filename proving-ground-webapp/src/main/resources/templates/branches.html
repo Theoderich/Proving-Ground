@@ -20,12 +20,15 @@
         <thead>
         <tr>
             <th scope="col">branch</th>
+            <th scope="col">last build time</th>
             <th scope="col">status</th>
         </tr>
         </thead>
         <tr th:each="branch : ${branches}">
             <td>
                 <a th:href="${branch.linkId} + '/'" th:text="${branch.name}"></a>
+            </td>
+            <td th:text="${branch.newestBuild.startTime}">
             </td>
             <td>
                 <span th:classappend="${branch.status.ok} ? 'badge-success' :  'badge-danger'"

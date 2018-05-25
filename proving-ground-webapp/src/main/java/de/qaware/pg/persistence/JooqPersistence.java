@@ -22,6 +22,7 @@ import static de.qaware.pg.persistence.entity.tables.ErrorInfo.ERROR_INFO;
 import static de.qaware.pg.persistence.entity.tables.Project.PROJECT;
 import static de.qaware.pg.persistence.entity.tables.Test.TEST;
 import static de.qaware.pg.persistence.entity.tables.TestRun.TEST_RUN;
+import static org.jooq.impl.DSL.lateral;
 
 
 @Component
@@ -63,8 +64,12 @@ public class JooqPersistence implements Persistence {
     }
 
     @Override
-    public List<BranchView> listBranchesForProject(long projectId) {
-        return db.selectFrom(BRANCH).where(BRANCH.FK_PROJECT_ID.eq(projectId)).fetch(branchViewRecordMapper);
+    public List<BranchWithNewestBuildView> listBranchesForProject(long projectId) {
+        return db.select()
+                .from(BRANCH,
+                        lateral(db.select(BUILD.fields()).from(BUILD).where(BRANCH.ID.eq(BUILD.FK_BRANCH_ID)).orderBy(BUILD.ID.desc()).limit(1))
+                )
+                .fetch(new BranchWithNewestBuildViewRecordMapper());
     }
 
     @Override
