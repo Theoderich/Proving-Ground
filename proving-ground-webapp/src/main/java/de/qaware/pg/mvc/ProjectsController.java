@@ -43,7 +43,7 @@ public class ProjectsController {
     public ModelAndView branchesView(@PathVariable("projectName") String projectName) throws ElementNotFoundException {
         ProjectView project = persistence.findProjectByName(projectName);
         List<BranchWithNewestBuildView> branches = persistence.listBranchesForProject(project.getId());
-        branches.sort(Comparator.comparing(b -> b.getNewestBuild().getStartTime()));
+        branches.sort(Comparator.comparing(b -> b.getNewestBuild().getStartTime(), Comparator.reverseOrder()));
         ModelAndView modelAndView = new ModelAndView("branches");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branches", branches);
