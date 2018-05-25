@@ -28,7 +28,7 @@
             <td>
                 <a th:href="${branch.linkId} + '/'" th:text="${branch.name}"></a>
             </td>
-            <td th:text="${branch.newestBuild.startTime}">
+            <td th:text="${branch.newestBuild.startTimeFormatted}">
             </td>
             <td>
                 <span th:classappend="${branch.status.ok} ? 'badge-success' :  'badge-danger'"
