@@ -58,7 +58,7 @@ public class ProjectsController {
         ProjectView project = persistence.findProjectByName(projectName);
         BranchView branch = persistence.findBranchByName(project.getId(), branchName);
         List<BuildView> builds = persistence.listBuildsForBranch(branch.getId());
-        builds.sort(Comparator.comparing(BuildView::getStartTime, Comparator.reverseOrder()));
+        builds.sort(Comparator.comparing(BuildView::getStartTime));
         ModelAndView modelAndView = new ModelAndView("builds");
         modelAndView.addObject("project", project);
         modelAndView.addObject("branch", branch);
