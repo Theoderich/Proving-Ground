@@ -21,7 +21,7 @@
     <a th:href="${build.linkId} + '?showAll=true'" th:unless="${showAll}">Show all Tests</a>
 
     <div>
-        <b th:text="|${build.num_total} tests run ${build.num_success} sucessful, ${build.num_failed} failed, ${build.num_skipped} skipped|"></b>
+        <b th:text="|${build.num_total} tests run ${build.num_success} successful, ${build.num_failed} failed, ${build.num_skipped} skipped|"></b>
     </div>
 
     <div th:if="${testRuns.isEmpty()}">
