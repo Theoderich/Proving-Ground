@@ -26,6 +26,7 @@
             <th scope="col">run</th>
             <th scope="col">commit</th>
             <th scope="col">timestamp</th>
+            <th scope="col">tests run</th>
             <th scope="col">result</th>
         </tr>
         </thead>
@@ -35,6 +36,8 @@
             </td>
             <td th:text="${build.commitId}"></td>
             <td th:text="${build.startTimeFormatted}">
+            </td>
+            <td th:text="|${build.num_total} tests run ${build.num_success} successful, ${build.num_failed} failed, ${build.num_skipped} skipped|">
             </td>
             <td>
                 <span th:classappend="${build.status.ok} ? 'badge-success' :  'badge-danger'"
