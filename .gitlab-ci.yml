@@ -10,7 +10,6 @@ variables:
 stages:
   - build
   - container
-  - cleanup
   - deploy
 
 build:
@@ -45,6 +44,8 @@ app-container:
     - 'docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASS $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO'
     - 'docker build --pull -t $APP_IMAGE_ID container'
     - 'docker push $APP_IMAGE_ID'
+  only:
+      - master
 
 deploy:
   stage: deploy
@@ -55,3 +56,5 @@ deploy:
       - oc project $OPENSHIFT_NAMESPACE
       - oc apply -f deployment.yml
       - oc rollout latest proving-ground-webapp
+  only:
+      - master
