@@ -67,7 +67,7 @@ public class JooqPersistence implements Persistence {
     public List<BranchWithNewestBuildView> listBranchesForProject(long projectId) {
         return db.select()
                 .from(BRANCH,
-                        lateral(db.select(BUILD.fields()).from(BUILD).where(BRANCH.ID.eq(BUILD.FK_BRANCH_ID)).orderBy(BUILD.ID.desc()).limit(1))
+                        lateral(db.select(BUILD.fields()).from(BUILD).where(BRANCH.ID.eq(BUILD.FK_BRANCH_ID)).orderBy(BUILD.ID.desc()).limit(1).asTable(BUILD.getName()))
                 )
                 .fetch(new BranchWithNewestBuildViewRecordMapper());
     }
