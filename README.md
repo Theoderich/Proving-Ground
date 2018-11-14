@@ -54,7 +54,7 @@ apply plugin: 'de.qaware.pg.proving-ground'
 
 buildscript {
     dependencies {
-        classpath 'de.qaware.pg:proving-ground-gradle-plugin:0.0.1-SNAPSHOT'
+        classpath 'de.qaware.pg:proving-ground-gradle-plugin:1.0.0'
     }
     
     'proving-ground-report'{
