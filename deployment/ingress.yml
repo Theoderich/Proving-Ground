@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: proving-ground-webapp
+  annotations:
+    kubernetes.io/ingress.class: external
+  labels:
+    app: proving-ground
+spec:
+  rules:
+  - host: proving-ground.cc.cluster.qaware.de
+    http:
+      paths:
+      - backend:
+          serviceName: proving-ground-webapp
+          servicePort: http
+        path: /
+  tls:
+  - hosts:
+    - proving-ground.cc.cluster.qaware.de
+    secretName: wildcard-certificate

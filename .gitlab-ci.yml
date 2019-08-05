@@ -2,59 +2,71 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--fail-at-end -B -s .m2/settings.xml"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  APP_IMAGE_ID: $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO/proving-ground-webapp
-  SERVICE_NAME: proving-ground-webapp
-  OPENSHIFT_NAMESPACE: proving-ground
-
 
 stages:
-  - build
-  - container
+  - build-app
+  - build-container
   - deploy
 
-build:
-  stage: build
-  image: maven:3.5.4-jdk-8-alpine
+build-app:
+  stage: build-app
+  image: maven:3.6-jdk-8-slim
   services:
-        - postgres:10.2
+    - postgres:11.4
   variables:
     POSTGRES_USER: pg
     POSTGRES_PASSWORD: pg
     POSTGRES_DB: proving_ground_jooq
   script:
-    - 'mvn $MAVEN_CLI_OPTS deploy'
-    - 'cd proving-ground-gradle-plugin'
-    - './gradlew build uploadArchives '
-    - 'cd ..'
-    - 'rm -r .m2/repository/de/qaware/pg'
+    - mvn $MAVEN_CLI_OPTS deploy
+    - cd proving-ground-gradle-plugin
+    - ./gradlew build uploadArchives
+    - cd ..
+    - rm -r .m2/repository/de/qaware/pg
   cache:
     paths:
       - .m2/repository
       - proving-ground-gradle-plugin/.gradle
   artifacts:
-     paths:
+    paths:
       - '*/target/*.jar'
       - '*/build/libs/*.jar'
+  tags:
+    - qaware-qabuild-cc-small
 
-app-container:
-  stage: container
-  image: docker:latest
+build-container:
+  stage: build-container
+  image:
+    name: gcr.io/kaniko-project/executor:debug-v0.10.0
+    entrypoint: [""]
   script:
-    - 'cp proving-ground-webapp/target/proving-ground-webapp-*.jar container/proving-ground-webapp.jar'
-    - 'docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASS $DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_REPO'
-    - 'docker build --pull -t $APP_IMAGE_ID container'
-    - 'docker push $APP_IMAGE_ID'
+  - echo "{\"auths\":{\"${DOCKER_REGISTRY_URL}\":{\"username\":\"${DOCKER_REGISTRY_USER}\",\"password\":\"${DOCKER_REGISTRY_PASS}\"}}}" > /kaniko/.docker/config.json
+  - cp proving-ground-webapp/target/proving-ground-webapp-*.jar container/proving-ground-webapp.jar
+  - >
+    /kaniko/executor
+    --context ${CI_PROJECT_DIR}/container
+    --dockerfile ${CI_PROJECT_DIR}/container/Dockerfile
+    --destination ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_REPO}/proving-ground-webapp:latest
+  retry: 2
   only:
-      - master
+    - master
+  tags:
+    - qaware-qabuild-cc-small
 
 deploy:
   stage: deploy
-  image: $DOCKER_REGISTRY_URL/qaware-docker/oc:latest
+  image: $DOCKER_REGISTRY_URL/qaware-docker/basetools:v1.0.0
   dependencies: []
+  variables:
+    K8S_NAMESPACE: proving-ground
   script:
-      - oc login $OPENSHIFT_URL -u $OPENSHIFT_USER -p $OPENSHIFT_PASS
-      - oc project $OPENSHIFT_NAMESPACE
-      - oc apply -f deployment.yml
-      - oc rollout latest proving-ground-webapp
+    - envsubst < deployment/deployment.yml.tpl > deployment/deployment.yml
+    - kubectl create ns $K8S_NAMESPACE || true
+    - kubectl label ns $K8S_NAMESPACE reflector-class=tls.docker --overwrite
+    - kubectl patch serviceaccount default -n $K8S_NAMESPACE -p '{"imagePullSecrets":[{"name":"docker-registry"}]}'
+    - kubectl delete deployment --selector app=proving-ground -n $K8S_NAMESPACE --ignore-not-found
+    - kubectl apply -f deployment/ -n $K8S_NAMESPACE
   only:
-      - master
+    - master
+  tags:
+    - qaware-qabuild-cc-small
