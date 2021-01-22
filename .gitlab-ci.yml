@@ -37,10 +37,9 @@ build-app:
 build-container:
   stage: build-container
   image:
-    name: gcr.io/kaniko-project/executor:debug-v0.10.0
+    name: gcr.io/kaniko-project/executor:v1.3.0-debug
     entrypoint: [""]
   script:
-  - echo "{\"auths\":{\"${DOCKER_REGISTRY_URL}\":{\"username\":\"${DOCKER_REGISTRY_USER}\",\"password\":\"${DOCKER_REGISTRY_PASS}\"}}}" > /kaniko/.docker/config.json
   - cp proving-ground-webapp/target/proving-ground-webapp-*.jar container/proving-ground-webapp.jar
   - >
     /kaniko/executor
@@ -48,14 +47,14 @@ build-container:
     --dockerfile ${CI_PROJECT_DIR}/container/Dockerfile
     --destination ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_REPO}/proving-ground-webapp:latest
   retry: 2
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
   tags:
     - qaware-qabuild-cc-small
 
 deploy:
   stage: deploy
-  image: $DOCKER_REGISTRY_URL/qaware-docker/basetools:v1.0.0
+  image: $DOCKER_REGISTRY_URL/projects/qabuild/basetools:v2.0.0
   dependencies: []
   variables:
     K8S_NAMESPACE: proving-ground
@@ -66,7 +65,7 @@ deploy:
     - kubectl patch serviceaccount default -n $K8S_NAMESPACE -p '{"imagePullSecrets":[{"name":"docker-registry"}]}'
     - kubectl delete deployment --selector app=proving-ground -n $K8S_NAMESPACE --ignore-not-found
     - kubectl apply -f deployment/ -n $K8S_NAMESPACE
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
   tags:
     - qaware-qabuild-cc-small
